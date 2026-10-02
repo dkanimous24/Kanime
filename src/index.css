@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Raleway:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  /* Backgrounds */
+  --color-primary: #0b0e14;
+  --color-secondary: #141925;
+  --color-elevated: #1d2433;
+
+  /* Borders */
+  --color-border: #2a3244;
+
+  /* Text */
+  --color-text-primary: #e8ecf4;
+  --color-text-secondary: #9aa5b8;
+  --color-text-muted: #5c6579;
+
+  /* Accent (blue) */
+  --color-accent: #4d9fff;
+  --color-accent-hover: #6fb4ff;
+  --color-accent-muted: #1b3a5c;
+
+  /* Pop accent */
+  --color-pop: #ff6b9d;
+  --color-pop-alt: #7c5cff;
+
+  /* Status */
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+
+  /* Genre colors — anime convention */
+  --color-genre-shonen: #f87171; /* red — action-driven */
+  --color-genre-shoujo: #ff6b9d; /* pink — romance-driven */
+  --color-genre-seinen: #64748b; /* slate — mature/gritty */
+  --color-genre-josei: #a78bfa; /* violet — mature romance/drama */
+  --color-genre-kodomo: #fbbf24; /* yellow — kids */
+
+  --color-genre-action: #ef4444;
+  --color-genre-adventure: #fb923c;
+  --color-genre-comedy: #facc15;
+  --color-genre-drama: #a78bfa;
+  --color-genre-fantasy: #7c5cff;
+  --color-genre-isekai: #8b5cf6;
+  --color-genre-mecha: #38bdf8;
+  --color-genre-mystery: #4c6ef5;
+  --color-genre-psychological: #6b7280;
+  --color-genre-romance: #ff6b9d;
+  --color-genre-scifi: #22d3ee;
+  --color-genre-slice-of-life: #4ade80;
+  --color-genre-sports: #34d399;
+  --color-genre-supernatural: #c084fc;
+  --color-genre-horror: #52525b;
+  --color-genre-thriller: #dc2626;
+  --color-genre-ecchi: #f472b6;
+  --color-genre-harem: #fb7185;
+
+  /* font-family */
+  --font-family: "Space Grotesk", "DM Sans", sans-serif;
+  --animate-mySpin: mySpin 200000000s infinite linear;
+}
+
+.card {
+  @apply relative w-full aspect-[2/3] rounded-2xl overflow-hidden
+         before:absolute before:inset-x-0 before:bottom-0 before:h-[80%]
+         before:bg-linear-to-t before:from-primary before:to-transparent
+         before:pointer-events-none;
+}
+
+/*  before:bg-primary before:absolute before:bottom-[-100px]  before:blur-2xl
+        before:w-[100vw] before:h-[250px] before:overflow-hidden before:opacity-[75%]; */
+
+.hero {
+  @apply relative left-1/2 flex w-screen -translate-x-1/2 overflow-hidden;
+}
+
+.genre {
+  @apply p-4 border-2 rounded-3xl sm:text-[12px];
+}
+
+.genre:active {
+  @apply border-pop-alt bg-pop-alt text-primary transition duration-100 ease-in;
+}
+
+/* .genre:hover p {
+  @apply text-primary;
+} */
+
+/* HERO ANIMATION  */
+@keyframes mySpin {
+  from {
+    translate: 0;
+  }
+  to {
+    translate: -100%;
+  }
+}
+
+.previous {
+  transition: all 0.5s ease-in-out;
+  transform: translateX(-100%);
+}
+
+html,
+body {
+  overflow-x: hidden;
+  background-color: var(--color-primary);
+}
+
+.loader {
+  --color-1: #141925;
+  --color-2: #7c5cff;
+  --size: 1px;
+
+  width: calc(48 * var(--size));
+  height: calc(48 * var(--size));
+  border: calc(5 * var(--size)) solid var(--color-1);
+  border-bottom-color: var(--color-2);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* FOR DYNAMICALLY ADDED STYLES SO THEY SHOW ON RENDER */
+@source inline("bg-genre-shonen");
+@source inline("bg-genre-shoujo");
+@source inline("bg-genre-seinen");
+@source inline("bg-genre-josei");
+@source inline("bg-genre-kodomo");
+@source inline("bg-genre-action");
+@source inline("bg-genre-adventure");
+@source inline("bg-genre-comedy");
+@source inline("bg-genre-drama");
+@source inline("bg-genre-fantasy");
+@source inline("bg-genre-isekai");
+@source inline("bg-genre-mecha");
+@source inline("bg-genre-mystery");
+@source inline("bg-genre-psychological");
+@source inline("bg-genre-romance");
+@source inline("bg-genre-scifi");
+@source inline("bg-genre-slice-of-life");
+@source inline("bg-genre-sports");
+@source inline("bg-genre-supernatural");
+@source inline("bg-genre-horror");
+@source inline("bg-genre-thriller");
+@source inline("bg-genre-ecchi");
+@source inline("bg-genre-harem");
