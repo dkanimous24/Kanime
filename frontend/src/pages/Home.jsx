@@ -222,7 +222,8 @@ function Home({ bookmarked, toggleBookmark }) {
   if (isLoading && !loadingTimedOut)
     return (
       <div className="flex min-h-[100svh] flex-col items-center justify-center gap-2">
-        <div className="h-40 w-40 sm:h-48 sm:w-48">
+        {/* Enlarged by 80% while keeping the SVG responsive and centered. */}
+        <div className="h-[288px] w-[288px] sm:h-[346px] sm:w-[346px]">
           <AnimatedSvg />
         </div>
         <p className="text-base font-medium text-text-secondary">Loading...</p>
