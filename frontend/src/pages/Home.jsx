@@ -221,8 +221,11 @@ function Home({ bookmarked, toggleBookmark }) {
   // Show only the shared loader while background data is arriving, but never wait over four seconds.
   if (isLoading && !loadingTimedOut)
     return (
-      <div className="flex h-screen flex-col items-center justify-center gap-3">
-        <AnimatedSvg />
+      <div className="flex min-h-[100svh] flex-col items-center justify-center gap-2">
+        <div className="h-40 w-40 sm:h-48 sm:w-48">
+          <AnimatedSvg />
+        </div>
+        <p className="text-base font-medium text-text-secondary">Loading...</p>
       </div>
     );
 
@@ -270,13 +273,17 @@ function Home({ bookmarked, toggleBookmark }) {
   return (
     <>
       <header>
-        {slides.length > 0 && (
+        {slides.length > 0 ? (
           <Hero
             slides={slides}
             animeList={animeList}
             bookmarked={bookmarked}
             onToggle={toggleBookmark}
           />
+        ) : (
+          <div className="flex h-[400px] w-full items-center justify-center bg-secondary text-text-secondary">
+            Featured anime
+          </div>
         )}
         <Search />
       </header>
