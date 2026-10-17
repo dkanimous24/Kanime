@@ -40,14 +40,16 @@ const fetchWithTimeout = async (url, ms = 8000) => {
 
 const inflight = new Map(); // path -> Promise (shared by duplicate callers)
 
-function jikanGet(path, retries = 3, delay = 1000) {
+function jikanGet(path, retries = 3, delay = 1000, timeout = 8000) {
   if (inflight.has(path)) return inflight.get(path);
 
   const request = (async () => {
     let lastError;
     for (let i = 0; i < retries; i++) {
       try {
-        const res = await throttle(() => fetchWithTimeout(`${JIKAN}${path}`));
+        const res = await throttle(() =>
+          fetchWithTimeout(`${JIKAN}${path}`, timeout),
+        );
 
         if (res.status === 429 || res.status === 503 || res.status === 504) {
           lastError = new Error(`Jikan busy (${res.status})`);
@@ -96,7 +98,8 @@ export const getAnime = async (limit = 20) => {
 
   // 2. live fetch
   try {
-    const json = await jikanGet(`/top/anime?limit=${limit}`);
+    // Keep the hero request within four seconds so a Jikan outage can't hold Home.
+    const json = await jikanGet(`/top/anime?limit=${limit}`, 1, 1000, 4000);
     const data = Array.isArray(json.data) ? json.data : [];
     if (data.length > 0) {
       try {

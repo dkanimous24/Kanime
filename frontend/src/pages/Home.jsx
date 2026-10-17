@@ -22,9 +22,6 @@ import { getAnimeNews } from "../components/animeNewsSimple";
 import News from "../components/news";
 import List from "../components/list";
 
-// >> KANIME REVIEW: [FRONTEND] loading/timeout behaviour is screen logic.
-const LOAD_TIMEOUT_MS = 20000; // Jikan can be slow, so give it more time
-
 // Lives OUTSIDE the component, so it survives leaving Home and coming back.
 // Home is destroyed when you open the anime profile page; this is what
 // stops everything from being fetched again when you return.
@@ -36,7 +33,6 @@ const LOAD_TIMEOUT_MS = 20000; // Jikan can be slow, so give it more time
 const saved = {
   trending: [],
   anime: [],
-  news: [],
   latestNews: [],
   covers: null,
 };
@@ -120,9 +116,6 @@ function Home({ bookmarked, toggleBookmark }) {
   //    not stored permanently in the [DATABASE].
   const [trendingAnime, setTrendingAnime] = useState(saved.trending); //trending anime should be inside the database
   const [anime, setAnime] = useState(saved.anime); //moved to the backend
-  // >> KANIME REVIEW: [FRONTEND for now] news is not personal or critical.
-  //    Caution: the /ann and /jikan proxies exist only in Vite dev; production needs the backend (or host) to relay them.
-  const [news, setNews] = useState(saved.news); //stays in frontend
   const [latestNews, setLatestNews] = useState(saved.latestNews); //stays in frontend
   const [covers, setCovers] = useState(saved.covers);
 
@@ -144,16 +137,6 @@ function Home({ bookmarked, toggleBookmark }) {
       .finally(() => setTrendingDone(true));
   }, []);
 
-  // If trending hasn't finished after LOAD_TIMEOUT_MS, show a timeout screen.
-  // Hooks must stay ABOVE the early returns below.
-  const [timedOut, setTimedOut] = useState(false);
-
-  useEffect(() => {
-    if (trendingDone || timedOut) return; // done, or timeout already showing
-    const timer = setTimeout(() => setTimedOut(true), LOAD_TIMEOUT_MS);
-    return () => clearTimeout(timer);
-  }, [trendingDone, timedOut]); // "Keep waiting" sets timedOut=false and restarts it
-
   useEffect(() => {
     if (saved.anime.length) return;
     // >> KANIME REVIEW: [BACKEND] same: this call becomes a request to the backend's anime list endpoint.
@@ -163,20 +146,7 @@ function Home({ bookmarked, toggleBookmark }) {
     });
   }, []);
 
-  // Anime News Network (goes through the /ann proxy, not Jikan)
-  useEffect(() => {
-    // >> KANIME REVIEW: [FRONTEND for now] ANN news; moves to [BACKEND] later with the other proxied calls.
-    if (saved.news.length) return;
-    getAnimeNews()
-      .then((data) => {
-        saved.news = data;
-        setNews(data);
-      })
-      .catch((err) => console.error(err));
-  }, []);
-
-  // Jikan news: queued behind the two calls above automatically.
-  // news can still stay in the frontend
+  // Fetch news only for the visible section; avoid the unused duplicate ANN prefetch.
   useEffect(() => {
     if (saved.latestNews.length) return;
     // >> KANIME REVIEW: [FRONTEND for now -> BACKEND later] this triggers many Jikan calls per visitor (see kitsu.js).
@@ -240,61 +210,6 @@ function Home({ bookmarked, toggleBookmark }) {
     episodes: a.episodes ?? "?",
   }));
 
-  // >> KANIME REVIEW: [FRONTEND] loading and error screens.
-  // Waited too long: show a timeout screen (if data arrives later, the page
-  // still appears on its own because trendingDone flips to true)
-  if (!trendingDone && timedOut)
-    return (
-      <div className="flex flex-col items-center justify-center h-screen gap-4 px-6 text-center">
-        <h1 className="text-2xl font-bold">This is taking too long</h1>
-        <p className="text-text-secondary max-w-[420px]">
-          The anime service isn't responding. It may be busy or your connection
-          may be slow. You can keep waiting or try again.
-        </p>
-        <div className="flex gap-3">
-          <button
-            className="bg-pop-alt px-6 py-3 rounded-xl font-bold"
-            onClick={() => window.location.reload()}
-          >
-            Try again
-          </button>
-          <button
-            className="border-2 border-text-muted px-6 py-3 rounded-xl font-bold"
-            onClick={() => setTimedOut(false)}
-          >
-            Keep waiting
-          </button>
-        </div>
-      </div>
-    );
-
-  // Still waiting for the first Jikan response
-  if (!trendingDone)
-    return (
-      <>
-        <div className="flex flex-row justify-self-center absolute transform translate-x-[1/2] w-124 h-125 translate-y-[1/2] mt-[10%]">
-          <div className="">
-            <AnimatedSvg />
-            <p className="justify-self-center absolute top-80"> Loading...</p>
-          </div>
-        </div>
-      </>
-    );
-
-  // Finished, but nothing came back: show a message instead of loading forever
-  if (slides.length === 0)
-    return (
-      <div className="flex flex-col items-center justify-center h-screen gap-4">
-        <p className="text-text-secondary">Couldn't load anime right now.</p>
-        <button
-          className="bg-pop-alt px-6 py-3 rounded-xl font-bold"
-          onClick={() => window.location.reload()}
-        >
-          Try again
-        </button>
-      </div>
-    );
-
   // >> KANIME REVIEW: [FRONTEND] display shape.
   const animes = anime.map(toItem);
 
@@ -318,12 +233,26 @@ function Home({ bookmarked, toggleBookmark }) {
   return (
     <>
       <header>
-        <Hero
-          slides={slides}
-          animeList={animeList}
-          bookmarked={bookmarked}
-          onToggle={toggleBookmark}
-        />
+        {/* Keep the rest of Home usable while the external anime request runs. */}
+        {slides.length > 0 ? (
+          <Hero
+            slides={slides}
+            animeList={animeList}
+            bookmarked={bookmarked}
+            onToggle={toggleBookmark}
+          />
+        ) : (
+          <div className="h-[400px] flex flex-col items-center justify-center gap-3 text-text-secondary">
+            {trendingDone ? (
+              <p>Featured anime is temporarily unavailable.</p>
+            ) : (
+              <>
+                <AnimatedSvg />
+                <p>Loading featured anime...</p>
+              </>
+            )}
+          </div>
+        )}
         <Search />
       </header>
       <div className=" sm:max-w-[300px] justify-self-center mx-auto md:max-w-[1200px] md:mx-auto mt-[64px]">
