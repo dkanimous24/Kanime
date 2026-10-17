@@ -37,6 +37,8 @@ const saved = {
   covers: null,
 };
 
+const LOAD_TIMEOUT_MS = 4000;
+
 // this should go into the database
 // >> KANIME REVIEW: [FRONTEND] stays, NOT database: translates your button labels to Jikan's spellings.
 //    It never changes while the app runs and is not personal. If genre filtering moves to the backend later, this mapping moves with it, still not to the database.
@@ -119,11 +121,15 @@ function Home({ bookmarked, toggleBookmark }) {
   const [latestNews, setLatestNews] = useState(saved.latestNews); //stays in frontend
   const [covers, setCovers] = useState(saved.covers);
 
-  // Trending and Discover now share ONE Jikan request (see kitsu.js), and every
-  // Jikan call is queued and spaced out there, so no setTimeout is needed here.
-  // If we already have cached trending data we are "done" straight away,
-  // so the loading screen never shows when you come back to Home.
-  const [trendingDone, setTrendingDone] = useState(saved.trending.length > 0);
+  // Keep the home screen on one loader until its background sections finish, with a short cap.
+  const [pending, setPending] = useState({
+    trending: !saved.trending.length,
+    anime: !saved.anime.length,
+    news: !saved.latestNews.length,
+    covers: Boolean(saved.trending.length && !saved.covers),
+  });
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  const isLoading = Object.values(pending).some(Boolean);
 
   useEffect(() => {
     // >> KANIME REVIEW: [FRONTEND] decides WHEN to ask; [BACKEND] answers. getTrendingAnime will become a request to your own endpoint.
@@ -132,18 +138,28 @@ function Home({ bookmarked, toggleBookmark }) {
       .then((data) => {
         saved.trending = data;
         setTrendingAnime(data);
+        setPending((current) => ({
+          ...current,
+          covers: Boolean(data.length && !saved.covers),
+        }));
       })
       .catch((err) => console.error(err))
-      .finally(() => setTrendingDone(true));
+      .finally(() =>
+        setPending((current) => ({ ...current, trending: false })),
+      );
   }, []);
 
   useEffect(() => {
     if (saved.anime.length) return;
     // >> KANIME REVIEW: [BACKEND] same: this call becomes a request to the backend's anime list endpoint.
-    getAnime(20).then((data) => {
-      saved.anime = data;
-      setAnime(data);
-    });
+    getAnime(20)
+      .then((data) => {
+        saved.anime = data;
+        setAnime(data);
+      })
+      .finally(() =>
+        setPending((current) => ({ ...current, anime: false })),
+      );
   }, []);
 
   // Fetch news only for the visible section; avoid the unused duplicate ANN prefetch.
@@ -157,8 +173,20 @@ function Home({ bookmarked, toggleBookmark }) {
         saved.latestNews = data;
         setLatestNews(data);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() =>
+        setPending((current) => ({ ...current, news: false })),
+      );
   }, []);
+
+  useEffect(() => {
+    if (!isLoading || loadingTimedOut) return;
+    const timer = setTimeout(
+      () => setLoadingTimedOut(true),
+      LOAD_TIMEOUT_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [isLoading, loadingTimedOut]);
 
   // >> KANIME REVIEW: [BACKEND later] enriching data with Kitsu banners is catalog work: do it once on the server,
   //    cache it, and send React ready-made cover URLs (today every visitor makes these calls).
@@ -182,12 +210,21 @@ function Home({ bookmarked, toggleBookmark }) {
       const result = Object.fromEntries(pairs);
       saved.covers = result; // keep it even if this component unmounted
       if (!cancelled) setCovers(result);
+      setPending((current) => ({ ...current, covers: false }));
     });
 
     return () => {
       cancelled = true;
     };
   }, [trendingAnime]);
+
+  // Show only the shared loader while background data is arriving, but never wait over four seconds.
+  if (isLoading && !loadingTimedOut)
+    return (
+      <div className="flex h-screen flex-col items-center justify-center gap-3">
+        <AnimatedSvg />
+      </div>
+    );
 
   // can stay in the frontend
   // >> KANIME REVIEW: [FRONTEND] agreed: shaping data for the hero slider is presentation.
@@ -233,25 +270,13 @@ function Home({ bookmarked, toggleBookmark }) {
   return (
     <>
       <header>
-        {/* Keep the rest of Home usable while the external anime request runs. */}
-        {slides.length > 0 ? (
+        {slides.length > 0 && (
           <Hero
             slides={slides}
             animeList={animeList}
             bookmarked={bookmarked}
             onToggle={toggleBookmark}
           />
-        ) : (
-          <div className="h-[400px] flex flex-col items-center justify-center gap-3 text-text-secondary">
-            {trendingDone ? (
-              <p>Featured anime is temporarily unavailable.</p>
-            ) : (
-              <>
-                <AnimatedSvg />
-                <p>Loading featured anime...</p>
-              </>
-            )}
-          </div>
         )}
         <Search />
       </header>
@@ -267,11 +292,7 @@ function Home({ bookmarked, toggleBookmark }) {
               bookmarked={bookmarked}
               onToggle={toggleBookmark}
             />
-          ) : (
-            <div className="col-span-full flex justify-center items-center py-12">
-              <span className="loader"></span>
-            </div>
-          )}
+          ) : null}
         </section>
 
         <h1 className="md:text-4xl text-2xl p-4 text-center md:text-left font-bold">
@@ -280,9 +301,7 @@ function Home({ bookmarked, toggleBookmark }) {
         <section className="md:font-bold my-6 mmt-5 md:mt-4 md:flex gap-3">
           {latestNews.length !== 0 ? (
             <News news={latestNews.slice(0, 3)} />
-          ) : (
-            <span className="loader"></span>
-          )}
+          ) : null}
           <List list={bookmarkedAnimes} />
         </section>
       </div>
