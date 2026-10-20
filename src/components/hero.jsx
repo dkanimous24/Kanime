@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { sharpenImage } from "./helpers";
+import { Route, Routes } from "react-router-dom";
 
 const cache = new Map(); // url -> sharpened data URL
 
