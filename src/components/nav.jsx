@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { closeMenu, openMenu, close, menu, nav } from "./menu";
-const Nav = () => {
+import Search from "./search";
+import { Link, useNavigate } from "react-router-dom";
+const Nav = ({ user, loadingUser, onLogout }) => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   return (
     <>
       <nav className="md:hidden  absolute z-[999] top-0 w-full bg-primary p-4">
@@ -79,16 +82,56 @@ const Nav = () => {
           </h1>
 
           <ul className="flex flex-col gap-2 md:flex-row md:items-center md:justify-self-center">
-            <li className="p-3 font-bold uppercase text-text-primary">home</li>
+            <li className="p-3 font-bold uppercase text-text-primary">
+              <Link to="./">home</Link>
+            </li>
             <li className="p-3 font-bold uppercase text-text-primary">
               bookmarks
             </li>
+            {user && (
+              <li className="p-3 font-bold uppercase text-text-primary">
+                {" "}
+                <Link to="/profile">you</Link>
+              </li>
+            )}
+
+            <Search />
             {/* <li className="p-3 font-bold uppercase text-text-primary">news</li> */}
           </ul>
 
-          <button className="w-[150px] rounded-2xl bg-pop-alt p-3 font-bold text-text-primary md:justify-self-end">
-            sign up
-          </button>
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-self-end">
+            {loadingUser ? (
+              <span className="text-text-primary">Checking session...</span>
+            ) : user ? (
+              <>
+                <span className="text-text-primary">Hi, {user.username}</span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    onLogout();
+                    navigate("/login/");
+                  }}
+                  className="w-[150px] rounded-2xl bg-pop-alt p-3 font-bold text-text-primary"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="p-3 font-bold text-text-primary">
+                  Login
+                </Link>
+
+                <Link
+                  to="/signup"
+                  className="w-[150px] rounded-2xl bg-pop-alt p-3 text-center font-bold text-text-primary"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </nav>
     </>

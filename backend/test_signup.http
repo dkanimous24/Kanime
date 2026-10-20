@@ -1,0 +1,44 @@
+
+POST http://127.0.0.1:8000/accounts/signup/
+Content-Type: application/json
+
+{
+    "username": "testkolade2",
+    "email": "testkolade2@example.com",
+    "password": "KanimeTest2026!Secure"
+}
+
+
+# POST http://127.0.0.1:8000/accounts/signup/
+# Content-Type: application/json
+# X-CSRFToken: OWX5O2DryfKKzCIIJWbFEyKoZaDlHCOWUodvkWc6YolEPRKU99ALBTMHU0VZ71K0
+
+# {
+#     "username": "csrf_test_user",
+#     "email": "csrf_test@example.com",
+#     "password": "A-Strong-Test-Password-2026!"
+# }
+
+
+###
+
+POST http://127.0.0.1:8000/accounts/login/
+Content-Type: application/json
+
+{
+    "username": "testkolade2",
+    "password": "KanimeTest2026!Secure"
+}
+
+### Get CSRF token
+GET http://127.0.0.1:8000/accounts/csrf/
+Accept: application/json
+
+### Logout
+POST http://127.0.0.1:8000/accounts/logout/
+Content-Type: application/json
+X-CSRFToken: cFEAsBLxRGFAUB8rjKSDd0a02wzy8FoZjBnWwR1L0JID86gP3DsZhSxNIFpGDQD7
+
+### Check current user
+GET http://127.0.0.1:8000/accounts/me/
+Accept: application/json

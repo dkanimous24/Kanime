@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { searchAnime } from "../kitsu";
-
+import { Link, useParams } from "react-router-dom";
 const Search = () => {
   const [searchedAnime, setSearchedAnime] = useState([]);
   const [query, setQuery] = useState("");
@@ -12,7 +12,7 @@ const Search = () => {
   !searchedAnime ? <p>loading...</p> : searchedAnime;
   return (
     <>
-      <div className="justify-self-center mt-[98px] md:ml-15 absolute  lg:right-50 lg:top-[-85px] md:right-0 md:top-100 top-78">
+      <div className="justify-self-center mt-[98px] md:ml-15 absolute  lg:right-250 lg:top-[-85px] md:right-0 md:top-100 top-78">
         <form>
           <div className="relative items-center z-40">
             <input
@@ -49,41 +49,47 @@ const Search = () => {
         >
           {query != ""
             ? searchedAnime.map((search) => (
-                <div className="min-h-36 bg-secondary rounded-2xl p-4 relative z-30">
-                  <div className="min-h-30 bg-border w-[95%]  rounded-2xl mx-auto my-auto">
-                    <div className="relative flex gap-2">
-                      <div className="w-15 h-20 bg-secondary mt-5 ml-2">
-                        <img
-                          className="w-full h-full"
-                          src={`${search.attributes.posterImage?.small}`}
-                          alt=""
-                        />
+                <Link
+                  to={`/animeProfile/${encodeURIComponent(search.attributes.canonicalTitle)}`}
+                >
+                  <div className="min-h-36 bg-secondary rounded-2xl p-4 relative z-30">
+                    <div className="min-h-30 bg-border w-[95%]  rounded-2xl mx-auto my-auto">
+                      <div className="relative flex gap-2">
+                        <div className="w-15 h-20 bg-secondary mt-5 ml-2">
+                          <img
+                            className="w-full h-full"
+                            src={`${search.attributes.posterImage?.small}`}
+                            alt=""
+                          />
+                        </div>
+                        <h3 className="font-bold block ml-20 absolute top-12 ">
+                          {search.attributes.canonicalTitle}
+                        </h3>
+                        <p className="flex absolute  left-20 top-18 text-[12px] items-center text-text-secondary">
+                          <span>{search.attributes.episodeCount}EP |</span>
+                          <span>
+                            {search.attributes.createdAt.slice(0, 4)} |
+                          </span>
+                          <span className="flex items-center text-genre-comedy">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              class=" size-4 md:size-5 fill-genre-comedy inline mb-1"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                            {(search.attributes.averageRating / 10).toFixed(1)}
+                          </span>
+                        </p>
                       </div>
-                      <h3 className="font-bold block ml-20 absolute top-12 ">
-                        {search.attributes.canonicalTitle}
-                      </h3>
-                      <p className="flex absolute  left-20 top-18 text-[12px] items-center text-text-secondary">
-                        <span>{search.attributes.episodeCount}EP |</span>
-                        <span>{search.attributes.createdAt.slice(0, 4)} |</span>
-                        <span className="flex items-center text-genre-comedy">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            class=" size-4 md:size-5 fill-genre-comedy inline mb-1"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"
-                              clip-rule="evenodd"
-                            />
-                          </svg>
-                          {(search.attributes.averageRating / 10).toFixed(1)}
-                        </span>
-                      </p>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))
             : null}
         </div>
