@@ -136,8 +136,28 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "kanime-catalog-cache",
+    }
+}
+
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
+
+# ============================================
+# KANIME CATALOG CACHE CONFIGURATION
+# ============================================
+
+CATALOG_TTL = {
+    "trending": 60 * 30,
+    "top": 60 * 30,
+    "search": 60 * 30,
+    "details": 60 * 60 * 24,
+    "covers": 60 * 60 * 24,
+    "stale": 60 * 60 * 24 * 3,
+}
 
 MAILERS = {
     "default": {
