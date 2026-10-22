@@ -1,11 +1,17 @@
-import { useState, useEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { useState, useEffect, use } from "react";
+import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import Nav from "./components/nav";
 import Home from "./pages/Home";
 import AnimeProfile from "./pages/animeProfile";
 import Profile from "./pages/profile";
-import { getCurrentUser, logout as logoutRequest } from "./api";
+import {
+  getCurrentUser,
+  logout as logoutRequest,
+  getWatchlist,
+  deleteWatchlist,
+  addWatchlist,
+} from "./api";
 import SignUp from "./pages/signUp";
 import Login from "./pages/login";
 
@@ -38,19 +44,19 @@ function BackendStatus() {
 // In React, sibling components cannot pass state directly sideways to each other.
 // Therefore, we "lift" the shared state (`bookmarked`) and its updater (`toggleBookmark`)
 // up to their closest common parent component: `App.jsx`.
+function getAnimeKey(source, outsideId) {
+  return `${source}:${outsideId}`;
+}
+
 function App() {
   const [user, setUser] = useState(null);
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
   const [loadingUser, setLoadingUser] = useState(true);
   // Shared state: initialized from localStorage so bookmarks persist across reloads
-  const [bookmarked, setBookmarked] = useState(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem("bookmarks"));
-      return saved && typeof saved === "object" ? saved : {};
-    } catch {
-      return {};
-    }
-  });
+  const [bookmarked, setBookmarked] = useState({});
+  const [loadingBookmarks, setLoadingBookmarks] = useState(true);
+  const [bookmarkBusy, setBookmarkBusy] = useState(false);
+  const [bookmarkError, setBookmarkError] = useState("");
 
   useEffect(() => {
     getCurrentUser()
@@ -58,6 +64,49 @@ function App() {
       .catch(() => setUser(null))
       .finally(() => setLoadingUser(false));
   }, []);
+
+  useEffect(() => {
+    let canceled = false;
+    if (loadingUser) return;
+
+    if (!user) {
+      setBookmarked({});
+      setLoadingBookmarks(false);
+      return;
+    }
+
+    setLoadingBookmarks(true);
+    setBookmarked({});
+
+    async function loadWatchlist() {
+      try {
+        const entries = await getWatchlist();
+        const bookmark = {};
+
+        for (const entry of entries) {
+          const key = getAnimeKey(entry.source, entry.outside_id);
+          bookmark[key] = {
+            ...entry,
+            name: entry.title,
+            url: entry.poster_url,
+            episodes: entry.episode ?? "?",
+          };
+        }
+
+        if (!canceled) {
+          setBookmarked(bookmark);
+        }
+      } catch (err) {
+        if (!canceled) console.log("failed to load watchlist", err);
+      } finally {
+        setLoadingBookmarks(false);
+      }
+    }
+    loadWatchlist();
+    return () => {
+      canceled = true;
+    };
+  }, [user?.id, loadingUser]);
 
   const handleAuthenticated = (userData) => {
     setUser(userData);
@@ -71,33 +120,116 @@ function App() {
       console.error("failed to logout", err);
     }
   };
-  // Whenever `bookmarked` changes (from Home OR Profile), sync it to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem("bookmarks", JSON.stringify(bookmarked));
-    } catch {
-      // ignore storage errors
-    }
-  }, [bookmarked]);
 
-  // Handler to toggle an anime's bookmark status (add if missing, remove if present)
-  const toggleBookmark = (item) =>
-    setBookmarked((prev) => {
-      const next = { ...prev };
-      if (next[item.name]) delete next[item.name];
-      else next[item.name] = item;
-      return next;
-    });
+  const toggleBookmarks = async (item) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    if (loadingBookmarks || bookmarkBusy) return;
+
+    const source = item.source ?? "jikan";
+    const outside_id = item.outside_id ?? item.mal_id;
+
+    if (!outside_id) {
+      console.error("cannot book without anime ID", item);
+      return;
+    }
+
+    const key = getAnimeKey(source, outside_id);
+    setBookmarkBusy(true);
+
+    try {
+      if (bookmarked[key]) {
+        await deleteWatchlist(source, String(outside_id));
+
+        setBookmarked((prev) => {
+          const updated = { ...prev };
+          delete updated[key];
+          return updated;
+        });
+      } else {
+        const saveEntry = await addWatchlist({
+          source,
+          outside_id: String(outside_id),
+          title: item.title ?? item.name,
+          poster_url: item.poster_url ?? item.url ?? "",
+          episode:
+            Number.isInteger(Number(item.episode ?? item.episodes)) &&
+            (item.episode ?? item.episodes) != "?"
+              ? Number(item.episode ?? item.episodes)
+              : null,
+        });
+
+        setBookmarked((prev) => ({
+          ...prev,
+          [key]: {
+            ...saveEntry,
+            id: saveEntry.outside_id,
+            name: saveEntry.title,
+            url: saveEntry.poster_url,
+            episodes: saveEntry.episode ?? "?",
+          },
+        }));
+      }
+    } catch (error) {
+      console.error("bookmark operation failed", error);
+
+      let sessionExpired = error.status === 401;
+
+      if (error.status === 403) {
+        try {
+          // Ask Django whether this browser is still logged in.
+          const data = await getCurrentUser();
+
+          // Your /accounts/me/ endpoint returns { user: ... }
+          sessionExpired = !data.user;
+        } catch (authError) {
+          // Only treat a confirmed authentication failure
+          // as an expired session.
+          sessionExpired = authError.status === 401 || authError.status === 403;
+        }
+      }
+
+      if (sessionExpired) {
+        setUser(null);
+        setBookmarked({});
+
+        setBookmarkError("Your session has expired. Please log in again.");
+
+        navigate("/login");
+        return;
+      }
+
+      setBookmarkError("Unable to update your bookmark. Please try again.");
+    }
+  };
 
   return (
     <>
+      {bookmarkError && (
+        <div
+          role="alert"
+          className="fixed top-5 right-5 z-[9999] bg-genre-comedy text-white p-4 rounded-lg shadow-lg"
+        >
+          <p>{bookmarkError}</p>
+
+          <button
+            onClick={() => setBookmarkError("")}
+            className="mt-2 underline"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
       <Nav user={user} loadingUser={loadingUser} onLogout={handleLogout} />
       <Routes>
         {/* STEP 2A: Pass the lifted state and handler down to Home via props */}
         <Route
           path="/"
           element={
-            <Home bookmarked={bookmarked} toggleBookmark={toggleBookmark} />
+            <Home bookmarked={bookmarked} toggleBookmark={toggleBookmarks} />
           }
         />
         <Route path="/animeProfile/:animeName" element={<AnimeProfile />} />
@@ -105,14 +237,14 @@ function App() {
         <Route
           path="/profile"
           element={
-            loadingUser ? (
+            loadingUser || loadingBookmarks ? (
               <>
                 <p>checking profile...</p>
               </>
             ) : user ? (
               <Profile
                 bookmarked={bookmarked}
-                toggleBookmark={toggleBookmark}
+                toggleBookmark={toggleBookmarks}
                 user={user}
               />
             ) : (

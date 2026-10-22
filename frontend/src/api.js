@@ -9,7 +9,9 @@ async function getCsfrToken() {
   });
 
   if (!response.ok) {
-    throw new Error("something went wrong, could not get csfr token");
+    const error = new Error("Could not get CSRF token");
+    error.status = response.status;
+    throw error;
   }
 
   const data = await response.json();
@@ -22,7 +24,7 @@ async function getCsfrToken() {
 async function apiRequest(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
   const headers = {
-    ...options.header,
+    ...options.headers,
   };
 
   if (options.body) {
@@ -34,7 +36,9 @@ async function apiRequest(path, options = {}) {
     headers["X-CSRFToken"] = token;
   }
 
-  const response = await fetch(`${API_BASE}${path}`, {
+  const url = path.startsWith("/") ? path : `${API_BASE}${path}`;
+
+  const response = await fetch(url, {
     ...options,
     method,
     headers,
@@ -45,10 +49,23 @@ async function apiRequest(path, options = {}) {
     return null;
   }
 
-  const data = await response.json();
+  const contentType = response.headers.get("content-type") || "";
 
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      `Expected JSON but received ${contentType || "unknown content type"} ` +
+        `from ${response.url} (HTTP ${response.status})`,
+    );
+  }
+
+  const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.detail || data.message || JSON.stringify(data));
+    const error = new Error(
+      data.detail || data.message || JSON.stringify(data),
+    );
+
+    error.status = response.status;
+    throw error;
   }
 
   return data;
@@ -76,4 +93,27 @@ export function logout() {
 
 export function getCurrentUser() {
   return apiRequest("me/");
+}
+
+// GET function to get all saved anime of a particular user
+export function getWatchlist() {
+  return apiRequest("/api/watchlist/");
+}
+
+// POST function to add a new bookmark to the watchlist
+export function addWatchlist(anime) {
+  return apiRequest("/api/watchlist/", {
+    method: "POST",
+    body: JSON.stringify(anime),
+  });
+}
+
+//  DELETE function to delete a new bookmark to the watchlist
+export function deleteWatchlist(source, outside_id) {
+  return apiRequest(
+    `/api/watchlist/${encodeURIComponent(source)}/${encodeURIComponent(outside_id)}/`,
+    {
+      method: "DELETE",
+    },
+  );
 }

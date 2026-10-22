@@ -61,6 +61,8 @@ const LABEL_MAP = {
 //    The few fields saved in a watchlist entry (id, name, url, ...) are what the [DATABASE] stores.
 const toItem = (a) => ({
   id: a.mal_id,
+  source: "jikan",
+  outside_id: String(a.mal_id),
   url:
     a.images?.webp?.large_image_url ||
     a.images?.jpg?.large_image_url ||
@@ -104,14 +106,6 @@ function Home({ bookmarked, toggleBookmark }) {
   // >> KANIME REVIEW: [REMOVE LATER] once the backend exists the [DATABASE] is the source of truth.
   //    A second copy in the browser can disagree with it.
   // Sync to localStorage as backup whenever bookmarks change
-  useEffect(() => {
-    try {
-      // books marks stored should stay in the data base
-      localStorage.setItem("bookmarks", JSON.stringify(bookmarked));
-    } catch {
-      // storage full or blocked: ignore, bookmarks just won't persist
-    }
-  }, [bookmarked]);
 
   // Every piece of data starts from the cache (empty on the very first visit)
   // >> KANIME REVIEW: [FRONTEND] the state variable stays. The DATA comes from a [BACKEND] trending endpoint (cached),
@@ -157,9 +151,7 @@ function Home({ bookmarked, toggleBookmark }) {
         saved.anime = data;
         setAnime(data);
       })
-      .finally(() =>
-        setPending((current) => ({ ...current, anime: false })),
-      );
+      .finally(() => setPending((current) => ({ ...current, anime: false })));
   }, []);
 
   // Fetch news only for the visible section; avoid the unused duplicate ANN prefetch.
@@ -174,17 +166,12 @@ function Home({ bookmarked, toggleBookmark }) {
         setLatestNews(data);
       })
       .catch(console.error)
-      .finally(() =>
-        setPending((current) => ({ ...current, news: false })),
-      );
+      .finally(() => setPending((current) => ({ ...current, news: false })));
   }, []);
 
   useEffect(() => {
     if (!isLoading || loadingTimedOut) return;
-    const timer = setTimeout(
-      () => setLoadingTimedOut(true),
-      LOAD_TIMEOUT_MS,
-    );
+    const timer = setTimeout(() => setLoadingTimedOut(true), LOAD_TIMEOUT_MS);
     return () => clearTimeout(timer);
   }, [isLoading, loadingTimedOut]);
 
@@ -282,13 +269,11 @@ function Home({ bookmarked, toggleBookmark }) {
             onToggle={toggleBookmark}
           />
         ) : (
-          <div className="flex h-[400px] w-full items-center justify-center bg-secondary text-text-secondary">
-            Featured anime
-          </div>
+          <div className="flex h-1000 w-full items-center justify-center bg-secondary text-text-secondary"></div>
         )}
         <Search />
       </header>
-      <div className=" sm:max-w-[300px] justify-self-center mx-auto md:max-w-[1200px] md:mx-auto mt-[64px]">
+      <div className=" sm:max-w-75 justify-self-center mx-auto md:max-w-300 lg:max-w-350  md:mx-auto mt-16">
         <Genres genres={genres} selected={selected} onSelected={setSelected} />
         <h1 className="md:text-4xl md:font-bold my-6 mt-24 md:mt-4 text-2xl p-4 text-center md:text-left">
           Discover your favorite anime

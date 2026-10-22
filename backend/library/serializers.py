@@ -27,5 +27,12 @@ class watchListEntrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WatchlistEntry
-        fields = ["source", "outside_id", "title", "poster_url", "episode"]
+        fields = [
+            "source",
+            "outside_id",
+            "title",
+            "poster_url",
+            "episode",
+            "date_added",
+        ]
         read_only_fields = fields

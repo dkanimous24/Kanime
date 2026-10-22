@@ -83,7 +83,8 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
   // Bookmark state is derived from App's shared state, keyed by name.
   // Each slide has its own entry, and Discover cards stay in sync.
   const current = slides[currentSlide];
-  const isBookmarked = !!bookmarked[current.name];
+  const animeKey = `${current.item.source}:${current.item.outside_id}`;
+  const isBookmarked = !!bookmarked[animeKey];
 
   const nextSlide = () => {
     if (direction) return; // ignore clicks while sliding
@@ -201,7 +202,7 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
           </svg>
         </div>
 
-        <div className="absolute md:top-[24px] top-[86px] sm:justify-self-center md:justify-self-start justify-self-center md:left-[64px] right-0 z-[999] flex gap-2 p-3">
+        <div className="absolute md:top-[24px] top-[86px] sm:justify-self-center md:justify-self-start justify-self-center md:left-16 right-0 z-999 flex gap-2 p-3">
           <div className="flex flex-col">
             <div className="flex gap-2 text-text-secondary items-center">
               <p className="px-3 py-1 md:px-5 md:py-1 rounded-[5px] bg-genre-shonen uppercase text-primary font-extrabold md:text-[16px] text-[10px]">

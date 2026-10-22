@@ -25,7 +25,7 @@ const List = ({ list }) => {
 
         {list.map((anime) => (
           <div
-            key={anime.name}
+            key={`${anime.source}:${anime.outside_id}`}
             className="bg-primary flex gap-3 p-3 border border-elevated hover:border-pop-alt transition duration-100 ease-in rounded-2xl relative"
           >
             <div className="w-7 h-7 mt-2 bg-pop rounded-[5px] ">

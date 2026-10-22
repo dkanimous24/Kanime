@@ -90,3 +90,61 @@ Django must enforce the following rules when a user creates a Kanime account:
 - Passwords must be hashed using Django's password-handling system; they must never be stored as plain text.
 - Django must enforce validation even if React has already validated the form.
 - Error responses must not expose passwords or password hashes.
+
+## Watchlist API
+
+### GET `/api/watchlist/`
+
+**Purpose:** Retrieve the authenticated user's saved anime.
+
+**Request method:** GET
+
+**Expected responses:**
+
+- `200 OK` — Returns the user's watchlist as JSON.
+- Authentication failure — Request is rejected when the user is not logged in. Our current DRF setup may return `403 Forbidden`.
+
+### POST `/api/watchlist/`
+
+**Purpose:** Add an anime to the authenticated user's watchlist.
+
+**Request method:** POST
+
+**Example request:**
+
+```json
+{
+  "source": "jikan",
+  "outside_id": "20",
+  "title": "Naruto",
+  "poster_url": "https://example.com/naruto.jpg",
+  "episode": 220
+}
+```
+
+**Expected responses:**
+
+- `201 Created` — Anime successfully added.
+- `200 OK` — Anime already exists in the user's watchlist, if supported by the view.
+- `400 Bad Request` — Invalid submitted data.
+- `403 Forbidden` — Authentication, permission, or CSRF check failed.
+
+### DELETE `/api/watchlist/<source>/<outside_id>/`
+
+**Purpose:** Remove an anime from the authenticated user's watchlist.
+
+**Request method:** DELETE
+
+**Expected responses:**
+
+- `204 No Content` — Bookmark successfully removed.
+- `403 Forbidden` — Authentication or permission check failed.
+- `404 Not Found` — Bookmark does not exist for the current user, if the view uses this behavior.
+
+### Authentication
+
+Watchlist requests use Django session-cookie authentication.
+
+POST and DELETE requests require CSRF protection.
+
+Every watchlist operation must be scoped to the currently authenticated user.

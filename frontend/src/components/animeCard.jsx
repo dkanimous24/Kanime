@@ -50,7 +50,9 @@ const AnimeCard = ({ animes, bookmarked, onToggle }) => {
                 onToggle(anime);
               }}
             >
-              {bookmarked[anime.name] ? bookmarkClosed() : bookmarkOpen()}
+              {bookmarked[`${anime.source}:${anime.outside_id}`]
+                ? bookmarkClosed()
+                : bookmarkOpen()}
             </div>
 
             <div
