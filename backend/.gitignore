@@ -1,2 +1,8 @@
 # secrets
 .env
+db.sqlite3
+db-Copy.sqlite3
+db_backup.sqlite3
+kanime_data.json
+kanime_data_utf8.json
+*.dump

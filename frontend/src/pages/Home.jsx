@@ -11,12 +11,8 @@ import Hero from "../components/hero";
 //    The real age rating is already in each slide (viewingAge). Replace this later.
 import { animeList } from "../components/test";
 import Genres from "../components/genre";
-import {
-  getTrendingAnime,
-  getAnime,
-  searchAnime,
-  getLatestNews,
-} from "../kitsu";
+import { searchAnime, getLatestNews } from "../kitsu";
+import { getCatalogTrending, getCatalogTop } from "../api";
 import AnimatedSvg from "../components/loading";
 import { getAnimeNews } from "../components/animeNewsSimple";
 import News from "../components/news";
@@ -60,23 +56,15 @@ const LABEL_MAP = {
 // >> KANIME REVIEW: [FRONTEND now -> BACKEND later] reshapes external data. Later Django's catalog does this and returns this shape.
 //    The few fields saved in a watchlist entry (id, name, url, ...) are what the [DATABASE] stores.
 const toItem = (a) => ({
-  id: a.mal_id,
-  source: "jikan",
-  outside_id: String(a.mal_id),
-  url:
-    a.images?.webp?.large_image_url ||
-    a.images?.jpg?.large_image_url ||
-    a.images?.webp?.image_url ||
-    a.images?.jpg?.image_url,
-  name: a.title_english || a.title || "Untitled",
-  rating: a.score ? Number(a.score).toFixed(1) : "N/A",
+  id: a.outside_id,
+  source: a.source,
+  outside_id: String(a.outside_id),
+  url: a.poster,
+  name: a.title || "untitled",
+  rating: a.score != null ? Number(a.score).toFixed(1) : "N/A",
   episodes: a.episodes ?? "?",
-  genre: a.genres?.[0]?.name || a.demographics?.[0]?.name || "Shonen",
-  tags: [
-    ...(a.genres ?? []),
-    ...(a.demographics ?? []),
-    ...(a.themes ?? []),
-  ].map((g) => g.name.toLowerCase()),
+  genre: a.genres?.[0] || "Shonen",
+  tags: (a.genres ?? []).map((genre) => genre.toLowerCase()),
 });
 
 // ============================================================================
@@ -120,7 +108,7 @@ function Home({ bookmarked, toggleBookmark }) {
     trending: !saved.trending.length,
     anime: !saved.anime.length,
     news: !saved.latestNews.length,
-    covers: Boolean(saved.trending.length && !saved.covers),
+    covers: false,
   });
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
   const isLoading = Object.values(pending).some(Boolean);
@@ -128,14 +116,11 @@ function Home({ bookmarked, toggleBookmark }) {
   useEffect(() => {
     // >> KANIME REVIEW: [FRONTEND] decides WHEN to ask; [BACKEND] answers. getTrendingAnime will become a request to your own endpoint.
     if (saved.trending.length) return; // already cached
-    getTrendingAnime()
-      .then((data) => {
+    getCatalogTrending()
+      .then((response) => {
+        const data = response.data;
         saved.trending = data;
         setTrendingAnime(data);
-        setPending((current) => ({
-          ...current,
-          covers: Boolean(data.length && !saved.covers),
-        }));
       })
       .catch((err) => console.error(err))
       .finally(() =>
@@ -146,8 +131,9 @@ function Home({ bookmarked, toggleBookmark }) {
   useEffect(() => {
     if (saved.anime.length) return;
     // >> KANIME REVIEW: [BACKEND] same: this call becomes a request to the backend's anime list endpoint.
-    getAnime(20)
-      .then((data) => {
+    getCatalogTop()
+      .then((response) => {
+        const data = response.data;
         saved.anime = data;
         setAnime(data);
       })
@@ -220,21 +206,15 @@ function Home({ bookmarked, toggleBookmark }) {
   // can stay in the frontend
   // >> KANIME REVIEW: [FRONTEND] agreed: shaping data for the hero slider is presentation.
   const slides = trendingAnime.slice(0, 3).map((a) => ({
-    url:
-      covers?.[a.mal_id] || // 1. Kitsu banner (wide, best for the hero)
-      a.trailer?.images?.maximum_image_url || // 2. trailer thumbnail
-      a.images?.webp?.large_image_url || // 3. poster
-      a.images?.jpg?.large_image_url,
+    url: a.cover || a.poster,
     description: a.synopsis || "",
-    year: a.aired?.from || "",
-    name: a.title_english || a.title || "Untitled",
-    rating: Number(a.score) || 0, // hero calls .toFixed(1), so keep it a number
-    viewingAge: a.rating || "PG-13",
-    // The object that gets saved when you bookmark this slide.
-    // Same shape as a Discover card, so List works for both.
-    genres: [...(a.genres ?? []), ...(a.demographics ?? [])].map((g) => g.name),
+    year: String(a.year ?? ""),
+    name: a.title || "Untitled",
+    rating: Number(a.score) || 0,
+    viewingAge: a.age_rating || "PG-13",
+    genres: a.genres || [],
     item: toItem(a),
-    studio: a.studios?.[0]?.name || "Unknown",
+    studio: a.studio || "Unknown",
     episodes: a.episodes ?? "?",
   }));
 
@@ -269,7 +249,7 @@ function Home({ bookmarked, toggleBookmark }) {
             onToggle={toggleBookmark}
           />
         ) : (
-          <div className="flex h-1000 w-full items-center justify-center bg-secondary text-text-secondary"></div>
+          <div className="flex h-100 w-full items-center justify-center bg-secondary text-text-secondary"></div>
         )}
         <Search />
       </header>

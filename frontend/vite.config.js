@@ -23,7 +23,7 @@ export default defineConfig({
       // Jikan (MyAnimeList) API: the browser talks to localhost, Vite talks to Jikan.
       // No CORS, and extensions/ad blockers can't see a cross-site request.
       "/jikan": {
-        target: "https://api.jikan.moe",
+        target: "https://api.jikan.moe/v4",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/jikan/, ""),
       },

@@ -6,7 +6,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from .serializer import SignupSerializer
+from django.db import IntegrityError, transaction
+from .serializer import SignupSerializer, LoginSerializer
 
 
 # Create your views here.
@@ -14,17 +15,46 @@ from .serializer import SignupSerializer
 def signup(request):
     serializer = SignupSerializer(data=request.data)
 
-    if serializer.is_valid():
-        serializer.save()
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(
-            {"message": "account created succefully"}, status=status.HTTP_201_CREATED
+    try:
+        with transaction.atomic():
+            serializer.save()
+
+    except IntegrityError as error:
+
+        database_error = error.__cause__
+
+        constraint_name = getattr(
+            getattr(database_error, error, "diag", None), "constraint_name", None
         )
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if constraint_name == "unique_user_email_case_insensitive":
+
+            return Response(
+                {"email": ["An account with this email already exist"]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        raise
+
+    return Response(
+        {"message": "account created successfully"},
+        status=status.HTTP_201_CREATED,
+    )
 
 
 @api_view(["POST"])
 def login_view(request):
+
+    serializer = LoginSerializer(data=request.data)
+
+    if not serializer.is_valid():
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
     username = request.data.get("username")
     password = request.data.get("password")
 

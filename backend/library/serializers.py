@@ -3,12 +3,27 @@ from .models import WatchlistEntry
 
 
 class AnimeInputSerializer(serializers.Serializer):
-    source = serializers.CharField(max_length=50)
-    outside_id = serializers.CharField(max_length=50)
-    title = serializers.CharField(max_length=255)
-    poster_url = serializers.URLField(required=False, allow_blank=True)
+    source = serializers.ChoiceField(choices=["jikan", "kitsu"])
+    outside_id = serializers.CharField(
+        max_length=50, allow_blank=False, trim_whitespace=True
+    )
+    title = serializers.CharField(
+        max_length=255,
+        allow_blank=False,
+        trim_whitespace=True,
+    )
+
+    poster_url = serializers.URLField(
+        required=False,
+        allow_blank=True,
+        max_length=200,
+    )
+
     episode = serializers.IntegerField(
-        required=False, min_value=0, max_value=1000000, allow_null=True
+        required=False,
+        min_value=0,
+        max_value=1000000,
+        allow_null=True,
     )
 
     def validate_poster_url(self, value):

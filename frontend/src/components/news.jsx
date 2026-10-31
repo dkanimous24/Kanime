@@ -1,30 +1,35 @@
 import { getNewsType } from "./newsType";
+import { safeUrl } from "../utils/safeUrl";
 
 // Turns a date string into "5m ago", "3h ago" or "2d ago".
-// Uses the full date + timezone, so it's correct across days and zones.
 const timeAgo = (published) => {
   const then = new Date(published);
-  if (isNaN(then)) return ""; // unparseable date: show nothing
+  if (isNaN(then)) return "";
 
   const mins = Math.floor((Date.now() - then.getTime()) / 60000);
+
   if (mins < 1) return "just now";
   if (mins < 60) return `${mins}m ago`;
+
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h ago`;
+
   return `${Math.floor(hours / 24)}d ago`;
 };
 
 const News = ({ news }) => {
   return (
     <div className="flex flex-col gap-2">
-      {news.map((item) => (
-        <a key={item.link} href={item.link}>
+      {news.map((item, index) => {
+        const newsUrl = safeUrl(item.link);
+        const imageUrl = safeUrl(item.image);
+
+        const content = (
           <div className="bg-secondary p-3 flex gap-2 rounded-2xl border border-elevated relative hover:border-2 hover:border-pop-alt transition duration-100 ease-in">
             <div className="w-20 h-36 bg-primary shrink-0">
-              {/* only render an image if the article actually has one */}
-              {item.image && (
+              {imageUrl && (
                 <img
-                  src={item.image}
+                  src={imageUrl}
                   alt=""
                   className="h-full w-full object-cover"
                 />
@@ -41,6 +46,7 @@ const News = ({ news }) => {
               </h2>
 
               <h3 className="text-[16px]">{item.title}</h3>
+
               <p className="text-sm text-text-secondary">{item.summary}...</p>
 
               <div className="absolute top-5 right-5 p-1 rounded-[5px] bg-primary opacity-75">
@@ -61,8 +67,21 @@ const News = ({ news }) => {
               </div>
             </div>
           </div>
-        </a>
-      ))}
+        );
+
+        return newsUrl ? (
+          <a
+            key={item.link ?? index}
+            href={newsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {content}
+          </a>
+        ) : (
+          <div key={item.link ?? index}>{content}</div>
+        );
+      })}
     </div>
   );
 };
