@@ -4,6 +4,10 @@ let csrf_token = null;
 
 // to get the csfr token
 async function getCsfrToken() {
+  if (csrf_token) {
+    return csrf_token;
+  }
+
   const response = await fetch(`${API_BASE}csrf/`, {
     credentials: "include",
   });
@@ -15,7 +19,7 @@ async function getCsfrToken() {
   }
 
   const data = await response.json();
-  const csrf_token = data.csrf;
+  csrf_token = data.csrf;
 
   return csrf_token;
 }
@@ -115,5 +119,27 @@ export function deleteWatchlist(source, outside_id) {
     {
       method: "DELETE",
     },
+  );
+}
+
+// Get trending anime
+export function getCatalogTrending() {
+  return apiRequest("/api/catalog/trending/");
+}
+
+// Get top-rated anime
+export function getCatalogTop() {
+  return apiRequest("/api/catalog/top/");
+}
+
+// Search for anime
+export function searchCatalogAnime(query) {
+  return apiRequest(`/api/catalog/search/?q=${encodeURIComponent(query)}`);
+}
+
+// Get individual anime details
+export function getCatalogAnimeDetails(source, outside_id) {
+  return apiRequest(
+    `/api/catalog/anime/${encodeURIComponent(source)}/${encodeURIComponent(outside_id)}/`,
   );
 }

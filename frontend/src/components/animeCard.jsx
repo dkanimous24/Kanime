@@ -12,7 +12,9 @@ const AnimeCard = ({ animes, bookmarked, onToggle }) => {
     <>
       {animes.map((anime, i) => (
         <div key={anime.id || anime.name || i} className="card relative">
-          <Link to={`/animeProfile/${encodeURIComponent(anime?.name)}`}>
+          <Link
+            to={`/animeProfile/${encodeURIComponent(anime.source)}/${encodeURIComponent(anime.outside_id)}`}
+          >
             <img
               src={anime.url}
               className="w-full h-full object-cover"

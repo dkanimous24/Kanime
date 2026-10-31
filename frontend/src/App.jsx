@@ -127,7 +127,13 @@ function App() {
       return;
     }
 
-    if (loadingBookmarks || bookmarkBusy) return;
+    if (loadingBookmarks || bookmarkBusy) {
+      console.warn("Bookmark blocked!", {
+        loadingBookmarks,
+        bookmarkBusy,
+      });
+      return;
+    }
 
     const source = item.source ?? "jikan";
     const outside_id = item.outside_id ?? item.mal_id;
@@ -138,6 +144,7 @@ function App() {
     }
 
     const key = getAnimeKey(source, outside_id);
+    console.log("STARTING BOOKMARK REQUEST:", key);
     setBookmarkBusy(true);
 
     try {
@@ -189,6 +196,8 @@ function App() {
           // Only treat a confirmed authentication failure
           // as an expired session.
           sessionExpired = authError.status === 401 || authError.status === 403;
+        } finally {
+          setBookmarkBusy(false);
         }
       }
 
@@ -203,6 +212,8 @@ function App() {
       }
 
       setBookmarkError("Unable to update your bookmark. Please try again.");
+    } finally {
+      setBookmarkBusy(false);
     }
   };
 
@@ -232,7 +243,15 @@ function App() {
             <Home bookmarked={bookmarked} toggleBookmark={toggleBookmarks} />
           }
         />
-        <Route path="/animeProfile/:animeName" element={<AnimeProfile />} />
+        <Route
+          path="/animeProfile/:source/:outside_id"
+          element={
+            <AnimeProfile
+              bookmarked={bookmarked}
+              toggleBookmark={toggleBookmarks}
+            />
+          }
+        />
         {/* STEP 2B: Pass the lifted state and handler down to Profile via props */}
         <Route
           path="/profile"

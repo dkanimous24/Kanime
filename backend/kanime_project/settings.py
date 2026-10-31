@@ -27,16 +27,66 @@ env = environ.Env(
 )
 environ.Env.read_env(BASE_DIR / ".env")
 
+DJANGO_ENV = env("DJANGO_ENV", default="development")
+
+if DJANGO_ENV not in ("development", "production"):
+    raise ValueError("DJANGO_ENV must development or production")
+
+IS_PRODUCTION = DJANGO_ENV == "production"
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+# ============================================
+# PRODUCTION SAFETY CHECKS
+# ============================================
+
+from django.core.exceptions import ImproperlyConfigured
+
+if IS_PRODUCTION:
+    if DEBUG:
+        raise ImproperlyConfigured("SECURITY ERROR: DEBUG must be False in production.")
+
+    if not env.list("ALLOWED_HOSTS", default=[]):
+        raise ImproperlyConfigured(
+            "SECURITY ERROR: ALLOWED_HOSTS must be explicitly configured in production."
+        )
+
+    if "*" in ALLOWED_HOSTS:
+        raise ImproperlyConfigured(
+            "SECURITY ERROR: Wildcard ALLOWED_HOSTS is forbidden in production."
+        )
 
 CORS_ALLOWED_ORIGINS = env.list("ALLOWED_ORIGINS")
 
 CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
+
+# ============================================
+# ENVIRONMENT-BASED SECURITY SETTINGS
+# ============================================
+
+# HTTPS
+SECURE_SSL_REDIRECT = IS_PRODUCTION
+
+# Session cookies
+SESSION_COOKIE_SECURE = IS_PRODUCTION
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+
+# CSRF cookies
+CSRF_COOKIE_SECURE = IS_PRODUCTION
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = "Lax"
+
+# HTTP security headers
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+
+# HSTS: keep disabled until production HTTPS is verified.
+SECURE_HSTS_SECONDS = 0
 
 # Application definition
 
@@ -52,12 +102,14 @@ INSTALLED_APPS = [
     "accounts",
     "core",
     "library",
+    "catalog",
 ]
 
 
 AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
+    "kanime_project.middleware.RequestSizeMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -93,8 +145,12 @@ WSGI_APPLICATION = "kanime_project.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST", default="localhost"),
+        "PORT": env("DB_PORT", default="5432"),
     }
 }
 
@@ -159,8 +215,22 @@ CATALOG_TTL = {
     "stale": 60 * 60 * 24 * 3,
 }
 
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
+# ============================================
+# EMAIL CONFIGURATION
+# ============================================
+
+if IS_PRODUCTION:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        }
+    }
+else:
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.console.EmailBackend",
+        }
+    }
+
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1_048_576
