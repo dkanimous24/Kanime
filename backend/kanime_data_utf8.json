@@ -1,0 +1,1091 @@
+[
+  {
+    "model": "sessions.session",
+    "pk": "4vnse6h3wxibsq637o7jqxnroc7c17xv",
+    "fields": {
+      "session_data": ".eJxVjDEOwjAMAP_iGUV23EDckZ03VG7j0gJKpKadEH9HlTrAene6N3S6rVO3VVu6OUELhHD6hb0OT8u7SQ_N9-KGktdl7t2euMNWdyvJXtej_RtMWidoQSQkjoEbY_XEIuQ50UgSWYTRkwb1w2g8mghGjAGxD0xni5Ev0sDnC8coNjc:1xJp6n:oWgts14SNwUXovtdrYjRQEQt4fwTDYqpadHMf4paR1Y",
+      "expire_date": "2026-11-05T09:29:13.695Z"
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "62ahk1ujrirrbuni6i2t7hir3d9hkfq9",
+    "fields": {
+      "session_data": ".eJxVjMsOwiAQAP9lz4ZAebZH734DWRZWqqYkpT0Z_9006UGvM5N5Q8R9q3HvZY1zhgkUXH5ZQnqW5RD5gcu9CWrLts5JHIk4bRe3lsvrerZ_g4q9wgSc9Ch9KkUSDog8eGOsHFl67Z1itiowSySTsw1htD6xCYGcRk9IDuHzBfRROG0:1xGnJy:dq-6bFY9lmaZ-Cp6kI3B8P0Qm5VD2rC5MzBNGyPDZ3g",
+      "expire_date": "2026-10-28T00:58:18.034Z"
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "6kz6lp3ymotc6v9i92pps3q6hagh9d94",
+    "fields": {
+      "session_data": ".eJxVjMsOwiAQAP9lz4ZAebZH734DWRZWqqYkpT0Z_9006UGvM5N5Q8R9q3HvZY1zhgkUXH5ZQnqW5RD5gcu9CWrLts5JHIk4bRe3lsvrerZ_g4q9wgSc9Ch9KkUSDog8eGOsHFl67Z1itiowSySTsw1htD6xCYGcRk9IDuHzBfRROG0:1xLjkq:42PGr6UVgQPBGhaXjbxfZzRmnOMngQ-L6Mdrzdv2X3g",
+      "expire_date": "2026-11-10T16:10:28.453Z"
+    }
+  },
+  {
+    "model": "sessions.session",
+    "pk": "qvkbro8rltzvmm8cu5zp0kbunsogjkyd",
+    "fields": {
+      "session_data": ".eJxVjMsOwiAQAP9lz4ZAebZH734DWRZWqqYkpT0Z_9006UGvM5N5Q8R9q3HvZY1zhgkUXH5ZQnqW5RD5gcu9CWrLts5JHIk4bRe3lsvrerZ_g4q9wgSc9Ch9KkUSDog8eGOsHFl67Z1itiowSySTsw1htD6xCYGcRk9IDuHzBfRROG0:1xLjkT:8b4gRQhfNekx41T-Vt0vbjYgj15Ly1QdVM3Opsqlo7A",
+      "expire_date": "2026-11-10T16:10:05.542Z"
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$jyJYHlG8rhv3bshhzkRdk7$Ol+iOXzPadFfiXo+VFJymzCNxFTYngPnnc/479SazXU=",
+      "last_login": "2026-10-27T16:10:28.443Z",
+      "is_superuser": true,
+      "username": "dkanimous24",
+      "first_name": "",
+      "last_name": "",
+      "email": "daramolakolade08@gmail.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2026-10-13T23:04:13.232Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$CtcDNFe1dxRAn3KQCkHv2w$INKlNbnkRpHTSOZPihl7qhtxHYtYe+uKSpuK9NrgY6U=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "testuser1",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-15T15:52:05.298Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$cHzw8YgWHkMqBJsEosrdjz$ecqSHojijiA5vuWaxNZzx2dqdBKAtDhbX96JfRHbS1E=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "testkolade",
+      "first_name": "",
+      "last_name": "",
+      "email": "testkolade@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-16T18:58:41.701Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$al6Wz2ugKNHhNuIIV1Nfrc$yH2d2JuPLKw/pK2xiaNfA05eugQSxLx80pBpeeGVgjQ=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "csrf_test_user",
+      "first_name": "",
+      "last_name": "",
+      "email": "csrf_test@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-17T10:19:07.978Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$Gmzd6LGin3azWaYDj8JlQq$oWM/njloVeoa9RSnkhCgBQ0vNiG22zizoEpWDZit6n8=",
+      "last_login": "2026-10-17T10:57:59.440Z",
+      "is_superuser": false,
+      "username": "testkolade2",
+      "first_name": "",
+      "last_name": "",
+      "email": "testkolade2@example.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-17T10:57:37.907Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$yU3bY7cauB9UAXamozMiQc$bdM+ZuoXu+MgfL16H0h0qWK9aLMZLgisGSZJiU56UpM=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "dYEAGERIST",
+      "first_name": "",
+      "last_name": "",
+      "email": "erenrules@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-17T17:58:18.313Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$1P3D2kX9MOQc5i7ff0Q34v$lDrIOWGKS3BKz1dVyBpxhKHZObiRMiCuSYcUX22Ka7Y=",
+      "last_login": "2026-10-22T09:31:04.464Z",
+      "is_superuser": false,
+      "username": "troy",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-21T17:43:33.615Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "accounts.user",
+    "fields": {
+      "password": "pbkdf2_sha256$1500000$x6HqKe45kfnjdIt51lMYtm$yDMJ58k5Tq3aJa++L5VcutTEKh7scesmqmOtUQ+nCG0=",
+      "last_login": "2026-10-27T10:30:45.109Z",
+      "is_superuser": false,
+      "username": "jake",
+      "first_name": "",
+      "last_name": "",
+      "email": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2026-10-21T17:44:53.522Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 2,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "21",
+      "title": "one piece",
+      "poster_url": "",
+      "episode": 1154,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 4,
+    "fields": {
+      "source": "kitsu",
+      "outside_id": "1010",
+      "title": "naruto",
+      "poster_url": "",
+      "episode": 220,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 5,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "20",
+      "title": "naruto",
+      "poster_url": "",
+      "episode": 220,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 6,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "52991",
+      "title": "Frieren: Beyond Journey's End",
+      "poster_url": "https://cdn.myanimelist.net/images/anime/1015/138006l.webp",
+      "episode": 28,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 7,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "61316",
+      "title": "Re:ZERO -Starting Life in Another World- Season 4",
+      "poster_url": "https://cdn.myanimelist.net/images/anime/1540/155824l.webp",
+      "episode": 19,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 8,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "5114",
+      "title": "Fullmetal Alchemist: Brotherhood",
+      "poster_url": "https://cdn.myanimelist.net/images/anime/1208/94745l.webp",
+      "episode": 64,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 9,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "28977",
+      "title": "Gintama Season 4",
+      "poster_url": "https://cdn.myanimelist.net/images/anime/3/72078l.webp",
+      "episode": 51,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 10,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "61469",
+      "title": "Steel Ball Run: JoJo's Bizarre Adventure",
+      "poster_url": "https://cdn.myanimelist.net/images/anime/1448/154111l.webp",
+      "episode": null,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 11,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "43608",
+      "title": "Kaguya-sama: Love is War -Ultra Romantic-",
+      "poster_url": "https://cdn.myanimelist.net/images/anime/1160/122627l.webp",
+      "episode": 13,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 12,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "kitsu-12",
+      "title": "One Piece",
+      "poster_url": "https://media.kitsu.app/anime/poster_images/12/large.jpg",
+      "episode": null,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 13,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "kitsu-210",
+      "title": "Detective Conan",
+      "poster_url": "https://media.kitsu.app/anime/poster_images/210/large.jpg",
+      "episode": null,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 14,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "9253",
+      "title": "Steins;Gate",
+      "poster_url": "https://cdn.myanimelist.net/images/anime/1935/127974l.webp",
+      "episode": 24,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 15,
+    "fields": {
+      "source": "jikan",
+      "outside_id": "38524",
+      "title": "Attack on Titan Season 3 Part 2",
+      "poster_url": "https://cdn.myanimelist.net/images/anime/1517/100633l.webp",
+      "episode": 10,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 16,
+    "fields": {
+      "source": "kitsu",
+      "outside_id": "7442",
+      "title": "Attack on Titan",
+      "poster_url": "https://media.kitsu.app/anime/poster_images/7442/large.jpg",
+      "episode": 25,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 17,
+    "fields": {
+      "source": "kitsu",
+      "outside_id": "48323",
+      "title": "Chainsaw Man – The Movie: Reze Arc",
+      "poster_url": "https://media.kitsu.app/anime/48323/poster_image/large-5548db6509abef22a2ee53233c97edc9.jpeg",
+      "episode": 1,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 18,
+    "fields": {
+      "source": "kitsu",
+      "outside_id": "46474",
+      "title": "Frieren: Beyond Journey’s End",
+      "poster_url": "https://media.kitsu.app/anime/46474/poster_image/large-ec9b98dd5fbf8f92532d1edb45f9e882.jpeg",
+      "episode": 28,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 19,
+    "fields": {
+      "source": "kitsu",
+      "outside_id": "49240",
+      "title": "Frieren: Beyond Journey's End Season 2",
+      "poster_url": "https://media.kitsu.app/anime/49240/poster_image/large-5f1824cd76b6e829012dc75a2f51ec44.jpeg",
+      "episode": 10,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 20,
+    "fields": {
+      "source": "kitsu",
+      "outside_id": "42586",
+      "title": "Demon Slayer -Kimetsu no Yaiba- The Movie: Mugen Train",
+      "poster_url": "https://media.kitsu.app/anime/poster_images/42586/large.jpg",
+      "episode": 1,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.animesnapshot",
+    "pk": 21,
+    "fields": {
+      "source": "kitsu",
+      "outside_id": "49264",
+      "title": "Oshi no Ko Season 3",
+      "poster_url": "https://media.kitsu.app/anime/49264/poster_image/large-b38fc6dc29e41b3d84764e069081cd94.jpeg",
+      "episode": 11,
+      "last_refreshed": null
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 1,
+    "fields": {
+      "user": [
+        "testuser1"
+      ],
+      "anime": 2,
+      "date_added": "2026-10-15T16:00:55.920Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 6,
+    "fields": {
+      "user": [
+        "testuser1"
+      ],
+      "anime": 5,
+      "date_added": "2026-10-15T16:24:05.363Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 8,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 5,
+      "date_added": "2026-10-21T17:55:04.279Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 9,
+    "fields": {
+      "user": [
+        "troy"
+      ],
+      "anime": 2,
+      "date_added": "2026-10-21T18:03:19.563Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 13,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 8,
+      "date_added": "2026-10-22T09:07:05.802Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 14,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 9,
+      "date_added": "2026-10-22T09:07:14.459Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 15,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 6,
+      "date_added": "2026-10-22T09:21:45.888Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 16,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 7,
+      "date_added": "2026-10-22T09:21:50.964Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 17,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 8,
+      "date_added": "2026-10-22T09:22:03.014Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 18,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 10,
+      "date_added": "2026-10-22T09:22:04.398Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 19,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 7,
+      "date_added": "2026-10-22T09:22:06.162Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 20,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 6,
+      "date_added": "2026-10-22T09:22:07.915Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 21,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 11,
+      "date_added": "2026-10-22T09:22:38.944Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 22,
+    "fields": {
+      "user": [
+        "troy"
+      ],
+      "anime": 7,
+      "date_added": "2026-10-22T09:32:21.819Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 23,
+    "fields": {
+      "user": [
+        "troy"
+      ],
+      "anime": 8,
+      "date_added": "2026-10-22T09:32:23.197Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 24,
+    "fields": {
+      "user": [
+        "troy"
+      ],
+      "anime": 10,
+      "date_added": "2026-10-22T09:32:25.424Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 25,
+    "fields": {
+      "user": [
+        "troy"
+      ],
+      "anime": 12,
+      "date_added": "2026-10-22T09:33:24.525Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 26,
+    "fields": {
+      "user": [
+        "troy"
+      ],
+      "anime": 13,
+      "date_added": "2026-10-22T09:33:29.243Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 27,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 9,
+      "date_added": "2026-10-22T10:17:36.059Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 28,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 14,
+      "date_added": "2026-10-22T10:26:14.018Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 29,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 15,
+      "date_added": "2026-10-22T10:40:32.103Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 30,
+    "fields": {
+      "user": [
+        "dkanimous24"
+      ],
+      "anime": 16,
+      "date_added": "2026-10-27T09:42:53.272Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 31,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 17,
+      "date_added": "2026-10-27T11:54:04.019Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 35,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 19,
+      "date_added": "2026-10-27T12:40:45.012Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 36,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 20,
+      "date_added": "2026-10-27T12:41:25.162Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 37,
+    "fields": {
+      "user": [
+        "jake"
+      ],
+      "anime": 21,
+      "date_added": "2026-10-27T12:43:09.122Z"
+    }
+  },
+  {
+    "model": "library.watchlistentry",
+    "pk": 38,
+    "fields": {
+      "user": [
+        "troy"
+      ],
+      "anime": 16,
+      "date_added": "2026-10-27T12:52:27.778Z"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+      "action_time": "2026-10-15T15:52:06.780Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "accounts",
+        "user"
+      ],
+      "object_id": "2",
+      "object_repr": "testuser1",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 2,
+    "fields": {
+      "action_time": "2026-10-15T15:54:07.854Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "accounts",
+        "user"
+      ],
+      "object_id": "3",
+      "object_repr": "testuser2",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 3,
+    "fields": {
+      "action_time": "2026-10-15T15:57:40.690Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "animesnapshot"
+      ],
+      "object_id": "1",
+      "object_repr": "narutp",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 4,
+    "fields": {
+      "action_time": "2026-10-15T15:57:56.885Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "animesnapshot"
+      ],
+      "object_id": "1",
+      "object_repr": "naruto",
+      "action_flag": 2,
+      "change_message": "[{\"changed\": {\"fields\": [\"Title\"]}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 5,
+    "fields": {
+      "action_time": "2026-10-15T15:59:04.904Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "animesnapshot"
+      ],
+      "object_id": "2",
+      "object_repr": "one piece",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 6,
+    "fields": {
+      "action_time": "2026-10-15T15:59:55.440Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "animesnapshot"
+      ],
+      "object_id": "3",
+      "object_repr": "death note",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 7,
+    "fields": {
+      "action_time": "2026-10-15T16:00:55.926Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "watchlistentry"
+      ],
+      "object_id": "1",
+      "object_repr": "testuser1:one piece",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 8,
+    "fields": {
+      "action_time": "2026-10-15T16:01:23.666Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "watchlistentry"
+      ],
+      "object_id": "2",
+      "object_repr": "testuser1:naruto",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 9,
+    "fields": {
+      "action_time": "2026-10-15T16:01:50.247Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "watchlistentry"
+      ],
+      "object_id": "3",
+      "object_repr": "testuser2:one piece",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 10,
+    "fields": {
+      "action_time": "2026-10-15T16:02:32.555Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "watchlistentry"
+      ],
+      "object_id": "4",
+      "object_repr": "testuser2:naruto",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 11,
+    "fields": {
+      "action_time": "2026-10-15T16:08:27.557Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "animesnapshot"
+      ],
+      "object_id": "3",
+      "object_repr": "death note",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 12,
+    "fields": {
+      "action_time": "2026-10-15T16:09:35.261Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "accounts",
+        "user"
+      ],
+      "object_id": "3",
+      "object_repr": "testuser2",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 13,
+    "fields": {
+      "action_time": "2026-10-15T16:16:15.067Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "animesnapshot"
+      ],
+      "object_id": "1",
+      "object_repr": "naruto",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 14,
+    "fields": {
+      "action_time": "2026-10-15T16:20:14.487Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "animesnapshot"
+      ],
+      "object_id": "4",
+      "object_repr": "naruto",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 15,
+    "fields": {
+      "action_time": "2026-10-15T16:20:39.539Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "animesnapshot"
+      ],
+      "object_id": "5",
+      "object_repr": "naruto",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 16,
+    "fields": {
+      "action_time": "2026-10-15T16:21:40.433Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "watchlistentry"
+      ],
+      "object_id": "5",
+      "object_repr": "testuser1:naruto",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 17,
+    "fields": {
+      "action_time": "2026-10-15T16:23:26.052Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "watchlistentry"
+      ],
+      "object_id": "5",
+      "object_repr": "testuser1:naruto",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 18,
+    "fields": {
+      "action_time": "2026-10-15T16:24:05.369Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "library",
+        "watchlistentry"
+      ],
+      "object_id": "6",
+      "object_repr": "testuser1:naruto",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 19,
+    "fields": {
+      "action_time": "2026-10-16T21:43:28.366Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "accounts",
+        "user"
+      ],
+      "object_id": "5",
+      "object_repr": "testkolade2",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 20,
+    "fields": {
+      "action_time": "2026-10-17T10:56:56.343Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "accounts",
+        "user"
+      ],
+      "object_id": "6",
+      "object_repr": "testkolade2",
+      "action_flag": 3,
+      "change_message": ""
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 21,
+    "fields": {
+      "action_time": "2026-10-21T17:43:35.130Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "accounts",
+        "user"
+      ],
+      "object_id": "10",
+      "object_repr": "troy",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  },
+  {
+    "model": "admin.logentry",
+    "pk": 22,
+    "fields": {
+      "action_time": "2026-10-21T17:44:54.954Z",
+      "user": [
+        "dkanimous24"
+      ],
+      "content_type": [
+        "accounts",
+        "user"
+      ],
+      "object_id": "11",
+      "object_repr": "jake",
+      "action_flag": 1,
+      "change_message": "[{\"added\": {}}]"
+    }
+  }
+]

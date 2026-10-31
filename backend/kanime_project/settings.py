@@ -173,6 +173,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    # Keep your existing DRF settings here.
+    "DEFAULT_THROTTLE_RATES": {
+        "login": "5/minute",
+        "signup": "3/minute",
+        "catalog_search": "30/minute",
+    },
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
