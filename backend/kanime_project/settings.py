@@ -71,6 +71,12 @@ CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
 # HTTPS
 SECURE_SSL_REDIRECT = IS_PRODUCTION
 
+
+# Trust Render's HTTPS proxy in production.
+if IS_PRODUCTION:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+
 # Session cookies
 SESSION_COOKIE_SECURE = IS_PRODUCTION
 SESSION_COOKIE_HTTPONLY = True
@@ -112,6 +118,7 @@ MIDDLEWARE = [
     "kanime_project.middleware.RequestSizeMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -151,6 +158,9 @@ DATABASES = {
         "PASSWORD": env("DB_PASSWORD"),
         "HOST": env("DB_HOST", default="localhost"),
         "PORT": env("DB_PORT", default="5432"),
+        "OPTIONS": {
+            "sslmode": "require" if IS_PRODUCTION else "prefer",
+        },
     }
 }
 
@@ -201,13 +211,24 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "kanime-catalog-cache",
+
+if IS_PRODUCTION:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": env("REDIS_URL"),
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "kanime-catalog-cache",
+        }
+    }
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
