@@ -180,6 +180,7 @@ REST_FRAMEWORK = {
         "signup": "3/minute",
         "catalog_search": "30/minute",
     },
+    "EXCEPTION_HANDLER": "kanime_project.exceptions.custom_exception_handler",
 }
 
 
@@ -243,3 +244,27 @@ else:
 
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1_048_576
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "%(levelname)s %(name)s: %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "loggers": {
+        "kanime.security": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+    },
+}

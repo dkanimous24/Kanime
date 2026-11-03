@@ -1,25 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer, useCallback } from "react";
 import { sharpenImage } from "./helpers";
-import { Route, Routes } from "react-router-dom";
 
 const cache = new Map(); // url -> sharpened data URL
 
 const SharpImage = ({ url, alt, className }) => {
-  const [src, setSrc] = useState(cache.get(url) || url); // original shows first
+  // Re-render trigger only: src is derived from the cache every render, so a
+  // slot never shows a stale image for one frame when the slides shift.
+  const [, rerender] = useReducer((n) => n + 1, 0);
+  const src = cache.get(url) ?? url; // original shows first
 
   useEffect(() => {
-    if (cache.has(url)) {
-      setSrc(cache.get(url));
-      return;
-    }
-    setSrc(url);
+    if (cache.has(url)) return;
     let cancelled = false;
 
     sharpenImage(url, 0.5)
       .then((canvas) => {
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
-        cache.set(url, dataUrl);
-        if (!cancelled) setSrc(dataUrl);
+        cache.set(url, canvas.toDataURL("image/jpeg", 0.92));
+        if (!cancelled) rerender();
       })
       .catch(() => {}); // on failure, the original stays
 
@@ -28,12 +25,40 @@ const SharpImage = ({ url, alt, className }) => {
     };
   }, [url]);
 
-  return <img src={src} alt={alt} className={className} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      draggable={false}
+      decoding="async"
+      className={className}
+    />
+  );
 };
+
+// Motion that answers a user action: text settles in after a slide change,
+// and the bookmark icon pops when toggled. Both respect reduced motion.
+// (Move this into your global CSS if you prefer.)
+const heroStyles = `
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes bookmark-pop {
+  0%   { transform: scale(0.75); }
+  55%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+.hero-in { animation: hero-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.bookmark-pop { animation: bookmark-pop 340ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .hero-in, .bookmark-pop { animation: none; }
+}
+`;
 
 // Icons live outside the component: they never change, so there's no
 // reason to rebuild them on every render.
-const BookmarkOpen = () => (
+const BookmarkOpen = ({ pop }) => (
   <>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +66,7 @@ const BookmarkOpen = () => (
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="size-7 w-[25px]"
+      className={`size-7 w-[25px] ${pop ? "bookmark-pop" : ""}`}
     >
       <path
         strokeLinecap="round"
@@ -49,17 +74,17 @@ const BookmarkOpen = () => (
         d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
       />
     </svg>
-    <p>bookmark</p>
+    <p className="text-xs md:text-xl">bookmark</p>
   </>
 );
 
-const BookmarkClosed = () => (
+const BookmarkClosed = ({ pop }) => (
   <>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 20 20"
       fill="currentColor"
-      className="size-7 w-[25px]"
+      className={`size-7 w-[25px] ${pop ? "bookmark-pop" : ""}`}
     >
       <path
         fillRule="evenodd"
@@ -67,15 +92,28 @@ const BookmarkClosed = () => (
         clipRule="evenodd"
       />
     </svg>
-    <p>bookmarked</p>
+    <p className="text-xs md:text-xl">bookmarked</p>
   </>
 );
+
+// Break long titles at a word boundary instead of mid-word.
+const splitTitle = (name) => {
+  const i = name.lastIndexOf(" ", 28);
+  const at = i > 10 ? i : 25;
+  return [name.slice(0, at), name.slice(at).trim()];
+};
+
+const focusRing =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-text-primary";
 
 const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // null = not sliding, "next" / "prev" = gliding
   const [direction, setDirection] = useState(null);
+
+  // Only true after the user toggles, so the pop never plays on slide change.
+  const [popped, setPopped] = useState(false);
 
   const prevIndex = (currentSlide - 1 + slides.length) % slides.length;
   const nextIndex = (currentSlide + 1) % slides.length;
@@ -86,21 +124,18 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
   const animeKey = `${current.item.source}:${current.item.outside_id}`;
   const isBookmarked = !!bookmarked[animeKey];
 
-  const nextSlide = () => {
-    if (direction) return; // ignore clicks while sliding
-    setDirection("next");
-  };
-
-  const prevSlide = () => {
-    if (direction) return;
-    setDirection("prev");
-  };
+  // Stable callbacks: ignore input while a glide is already running.
+  const nextSlide = useCallback(() => setDirection((d) => d ?? "next"), []);
+  const prevSlide = useCallback(() => setDirection((d) => d ?? "prev"), []);
 
   // Glide finished: change the images and snap the row back to rest.
-  const handleTransitionEnd = () => {
+  const handleTransitionEnd = (e) => {
+    // Ignore transitions bubbling up from children.
+    if (e.target !== e.currentTarget || e.propertyName !== "transform") return;
     if (direction === "next") setCurrentSlide(nextIndex);
     if (direction === "prev") setCurrentSlide(prevIndex);
     setDirection(null);
+    setPopped(false);
   };
 
   // 0 = showing PREV box, -100 = CURRENT (resting), -200 = NEXT
@@ -118,19 +153,24 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
     return () => window.removeEventListener("keydown", handleKey);
   }, [nextSlide, prevSlide]);
 
+  const [titleTop, titleRest] =
+    current.name.length > 50 ? splitTitle(current.name) : [];
+
   return (
     <>
+      <style>{heroStyles}</style>
       <div
-        className="hero h-[100%]  before:bg-primary before:absolute before:left-[0px]  before:blur-xl md:before:blur-2xl
-        before:w-[40%] md:before:w-[25%] before:shrink-0 before:h-full before:scale-305 md:before:scale-205 before:z-50  before:opacity-[20%];
-}"
+        className="hero h-[100%] before:bg-primary before:absolute before:left-[0px] before:blur-xl md:before:blur-2xl
+        before:w-[40%] md:before:w-[25%] before:shrink-0 before:h-full before:scale-305 md:before:scale-205 before:z-50 before:opacity-[20%]"
       >
         <div
           onTransitionEnd={handleTransitionEnd}
-          className="flex w-screen shrink-0"
+          className="flex w-screen shrink-0 will-change-transform"
           style={{
             transform: `translateX(${x}vw)`,
-            transition: direction ? "transform 300ms ease-in-out" : "none",
+            transition: direction
+              ? "transform 420ms cubic-bezier(0.32, 0.72, 0, 1)"
+              : "none",
           }}
         >
           {/* Box 1 - previous */}
@@ -161,10 +201,16 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
           </div>
         </div>
 
+        {/* Dark gradient: solid on the text side, fading out to reveal the art on the right */}
+        <div className="pointer-events-none absolute inset-0 z-10 bg-linear-to-r from-primary via-primary/60 via-55% to-transparent md:via-45%" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-2/5 bg-linear-to-t from-primary via-primary/40 to-transparent" />
+
         {/* Arrows stay outside the moving row */}
-        <div
+        <button
+          type="button"
           onClick={prevSlide}
-          className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full p-3 z-50"
+          aria-label="Previous slide"
+          className={`group absolute left-0 top-1/2 -translate-y-1/2 rounded-full p-3 z-50 select-none cursor-pointer transition duration-200 hover:bg-primary/40 hover:backdrop-blur-sm active:scale-95 ${focusRing}`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +218,7 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6 stroke-pop-alt w-[50px] h-[50px]"
+            className="size-6 stroke-pop-alt w-[50px] h-[50px] drop-shadow-md opacity-80 transition duration-200 group-hover:opacity-100 group-hover:-translate-x-0.5"
           >
             <path
               strokeLinecap="round"
@@ -180,11 +226,13 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
               d="M15.75 19.5 8.25 12l7.5-7.5"
             />
           </svg>
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           onClick={nextSlide}
-          className="absolute right-0 top-1/2 -translate-y-1/2 rounded-full p-3 z-[99999999]"
+          aria-label="Next slide"
+          className={`group absolute right-0 top-1/2 -translate-y-1/2 rounded-full p-3 z-[99999999] select-none cursor-pointer transition duration-200 hover:bg-primary/40 hover:backdrop-blur-sm active:scale-95 ${focusRing}`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -192,7 +240,7 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="size-6 stroke-pop-alt w-[50px] h-[50px]"
+            className="size-6 stroke-pop-alt w-[50px] h-[50px] drop-shadow-md opacity-80 transition duration-200 group-hover:opacity-100 group-hover:translate-x-0.5"
           >
             <path
               strokeLinecap="round"
@@ -200,15 +248,18 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
               d="m8.25 4.5 7.5 7.5-7.5 7.5"
             />
           </svg>
-        </div>
+        </button>
 
         <div className="absolute md:top-[24px] top-[86px] sm:justify-self-center md:justify-self-start justify-self-center md:left-16 right-0 z-999 flex gap-2 p-3">
-          <div className="flex flex-col">
-            <div className="flex gap-2 text-text-secondary items-center">
-              <p className="px-3 py-1 md:px-5 md:py-1 rounded-[5px] bg-genre-shonen uppercase text-primary font-extrabold md:text-[16px] text-[10px]">
+          {/* key = slide index, so the text settles in on every slide change */}
+          <div key={currentSlide} className="hero-in flex flex-col">
+            <div className="flex gap-3 text-text-secondary items-center">
+              <p className="px-3 py-1 md:px-5 md:py-1 rounded-md bg-genre-shonen uppercase tracking-wider text-primary font-extrabold md:text-[16px] text-[10px]">
                 Trending
               </p>
-              <p className="text-xs md:text-[16px]">{current.episodes} EP</p>
+              <p className="text-xs md:text-[16px] tabular-nums">
+                {current.episodes} EP
+              </p>
               <p className="text-xs md:text-[16px]">
                 {current.genres.slice(0, 3).map((genre) => (
                   <span key={genre}> • {genre}</span>
@@ -216,20 +267,21 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
               </p>
             </div>
             <div>
-              <h1 className="md:text-6xl md:mt-[32px] mb-[36px]  mt-[100] font-bold text-4xl">
-                {current.name.length > 50 ? (
-                  <p className="text-4xl">
-                    {current.name.slice(0, 25)}
-                    <br></br>{" "}
-                    <span className="text-text-muted">
-                      {current.name.slice(25)}
-                    </span>{" "}
-                  </p>
+              {/* Fluid size: 32px on small phones, scaling smoothly up to 60px.
+                  Words never split mid-word; lines wrap only between words and balance. */}
+              <h1
+                className={`mt-3 md:mt-[32px] mb-7 md:mb-[36px] max-w-[min(88vw,36rem)] font-bold ${current.name.length > 20 ? "text-[clamp(2rem,1.2rem+3.4vw,2.75rem)]" : "text-[clamp(2rem,1.2rem+3.4vw,3.75rem)]"} tracking-tight leading-[1.08] text-balance break-normal hyphens-none [overflow-wrap:normal] [text-shadow:0_2px_16px_rgb(0_0_0/0.45)]`}
+              >
+                {titleTop ? (
+                  <span className="block">
+                    {titleTop}
+                    <br /> <span className="text-text-muted">{titleRest}</span>
+                  </span>
                 ) : (
                   current.name
                 )}
               </h1>
-              <div className="flex gap-2 mb-[10px] items-center">
+              <div className="flex gap-3 mb-4 items-center">
                 <p className="flex gap-1 items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -243,36 +295,38 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <b className="md:text-[16px] text-xs text-genre-comedy">
+                  <b className="md:text-[16px] text-xs text-genre-comedy tabular-nums">
                     {current.rating.toFixed(1)}
                   </b>
                 </p>
-                <p className="text-text-secondary md:text-[16px] text-xs">
+                <p className="text-text-secondary md:text-[16px] text-xs tabular-nums">
                   {current.year.slice(0, 4)} •
                 </p>
-                <p className="text-text-secondary md:text-[16px] uppercase text-[10px]">
+                <p className="text-text-secondary md:text-[16px] uppercase tracking-wide text-[10px]">
                   {current.studio} •
                 </p>
                 <p className="text-text-secondary md:text-[16px] text-[10px]">
-                  {animeList[currentSlide].viewingAge}
+                  {animeList[currentSlide]?.viewingAge}
                 </p>
               </div>
-              <div className="md:w-125 w-75  md:text-left text-xs md:text-[16px] text-text-secondary">
+              <div className="md:w-125 w-75 md:text-left text-xs md:text-[16px] leading-relaxed text-pretty text-text-secondary max-w-full">
                 {current.description.length > 140
-                  ? current.description.split(" ").slice(0, 15).join(" ") +
-                    "..."
+                  ? current.description.split(" ").slice(0, 15).join(" ") + "…"
                   : current.description}
               </div>
             </div>
-            <div className="flex gap-2 mt-[24px] ">
-              <button className="md:py-5 md:px-10 px-2 py-3  hover:bg-genre-drama transition duration-100 ease-in  bg-pop-alt rounded-xl flex items-center text-primary font-bold">
+            <div className="flex gap-3 mt-7 md:mt-[32px]">
+              <button
+                type="button"
+                className={`group md:py-5 md:px-10 px-5 py-3.5 gap-2 bg-pop-alt hover:bg-genre-drama rounded-xl flex items-center text-primary font-bold cursor-pointer shadow-lg shadow-black/20 transition duration-150 ease-out hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:scale-[0.97] ${focusRing}`}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-8 stroke-primary"
+                  className="size-8 stroke-primary transition-transform duration-150 group-hover:translate-x-0.5"
                 >
                   <path
                     strokeLinecap="round"
@@ -285,10 +339,20 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
 
               {/* Passes the slide's full anime object (current.item) up to App */}
               <button
-                onClick={() => onToggle(current.item)}
-                className="md:py-5 md:px-10 px-2 py-3  border-2 transition duration-100 ease-in hover:bg-text-muted bg-transparent hover:border-text-muted border-text-primary rounded-xl flex items-center"
+                type="button"
+                onClick={() => {
+                  onToggle(current.item);
+                  setPopped(true);
+                }}
+                aria-pressed={isBookmarked}
+                aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+                className={`md:py-5 md:px-10 px-5 py-3.5 gap-2 border-2 bg-white/5 backdrop-blur-sm border-text-primary hover:bg-text-muted hover:border-text-muted rounded-xl flex items-center cursor-pointer transition duration-150 ease-out hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.97] ${focusRing}`}
               >
-                {isBookmarked ? <BookmarkClosed /> : <BookmarkOpen />}
+                {isBookmarked ? (
+                  <BookmarkClosed pop={popped} />
+                ) : (
+                  <BookmarkOpen pop={popped} />
+                )}
               </button>
             </div>
           </div>

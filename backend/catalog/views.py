@@ -2,6 +2,10 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import throttle_classes
+from kanime_project.throttle import CatalogSearchThrottle
+from rest_framework.exceptions import NotFound, ValidationError
+from kanime_project.exceptions import AnimeServiceUnavailable
 
 from catalog.services import (
     get_anime_details,
@@ -26,11 +30,8 @@ def trending_view(request):
     try:
         results = get_trending_anime()
         return Response(results, status=status.HTTP_200_OK)
-    except JikanError:
-        return Response(
-            {"error": "jikan is currently unavailable"},
-            status=status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
+    except (JikanError, KitsuError):
+        raise AnimeServiceUnavailable()
 
 
 @api_view(["GET"])
@@ -42,14 +43,12 @@ def top_view(request):
     try:
         results = get_top_anime()
         return Response(results, status=status.HTTP_200_OK)
-    except JikanError:
-        return Response(
-            {"error": "jikan is currently unavailable"},
-            status=status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
+    except (JikanError, KitsuError):
+        raise AnimeServiceUnavailable()
 
 
 @api_view(["GET"])
+@throttle_classes([CatalogSearchThrottle])
 def search_view(request):
     """
     Search anime by title.
@@ -65,11 +64,8 @@ def search_view(request):
 
         return Response(result, status=status.HTTP_200_OK)
 
-    except JikanError:
-        return Response(
-            {"error": "Anime service temporarily unavailable"},
-            status=status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
+    except (JikanError, KitsuError):
+        raise AnimeServiceUnavailable()
 
 
 @api_view(["GET"])
@@ -84,13 +80,10 @@ def anime_details_view(request, source, outside_id):
         return Response(result, status=status.HTTP_200_OK)
 
     except (JikanNotFound, KitsuNotFound):
-        return Response({"error": "Anime not found"}, status=status.HTTP_404_NOT_FOUND)
+        raise NotFound("Anime not found.")
 
-    except ValueError as error:
-        return Response({"error": str(error)}, status=status.HTTP_400_BAD_REQUEST)
+    except ValueError:
+        raise ValidationError({"outside_id": ["Invalid anime source or identifier."]})
 
     except (JikanError, KitsuError):
-        return Response(
-            {"error": "Anime service temporarily unavailable"},
-            status=status.HTTP_503_SERVICE_UNAVAILABLE,
-        )
+        raise AnimeServiceUnavailable()
