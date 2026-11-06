@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { closeMenu, openMenu, close, menu, nav } from "./menu";
 import Search from "./search";
 import { Link, useNavigate } from "react-router-dom";
 const Nav = ({ user, loadingUser, onLogout }) => {
@@ -7,7 +6,7 @@ const Nav = ({ user, loadingUser, onLogout }) => {
   const navigate = useNavigate();
   return (
     <>
-      <nav className="md:hidden  absolute z-[999] top-0 w-full bg-primary p-4">
+      <nav className="md:hidden  absolute z-999999 top-0 w-full bg-primary p-4">
         <div className="grid grid-cols-2 justify-between">
           <h1 className="ml-3 text-2xl font-bold text-text-primary flex items-center">
             <svg
@@ -44,50 +43,53 @@ const Nav = ({ user, loadingUser, onLogout }) => {
 
       <nav
         id="navigation"
-        className={`absolute z-[999999999] h-[100vh] fixed w-[350px] ${open === true ? "block" : "hidden"} md:block bg-primary border border-secondary p-5 md:relative md:h-auto md:w-full md:bg-primary md:p-0`}
+        className={`absolute top-0 z-999999999 h-screen w-87.5 max-w-full ${open === true ? "block" : "hidden"} md:block bg-primary border border-secondary p-5 md:relative md:h-auto md:w-full md:bg-primary md:p-0`}
       >
-        <div className="p-3 md:grid md:grid-cols-3 md:items-center">
-          <h1 className="ml-3 text-2xl font-bold text-text-primary flex items-center">
-            <div className="flex gap-36">
-              <div className="ml-3 text-2xl font-bold text-text-primary flex items-center">
+        <div className="p-3 md:grid md:grid-cols-[1fr_auto_1fr] md:gap-4 md:items-center">
+          <div className="md:flex md:items-center md:gap-4">
+            <h1 className="ml-3 text-2xl font-bold text-text-primary flex items-center">
+              <div className="flex gap-36">
+                <div className="ml-3 text-2xl font-bold text-text-primary flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="size-6 fill-pop-alt"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  KANIME
+                </div>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="size-6 fill-pop-alt"
+                  id="close"
+                  onClick={() => setOpen(false)}
+                  className="size-7 md:hidden"
                 >
                   <path
                     fillRule="evenodd"
-                    d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
+                    d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
                     clipRule="evenodd"
                   />
                 </svg>
-                KANIME
               </div>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                id="close"
-                onClick={() => setOpen(false)}
-                className="size-7 md:hidden"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5.47 5.47a.75.75 0 0 1 1.06 0L12 10.94l5.47-5.47a.75.75 0 1 1 1.06 1.06L13.06 12l5.47 5.47a.75.75 0 1 1-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 0 1-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 0 1 0-1.06Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </h1>
+            </h1>
 
+            <Search onSelect={() => setOpen(false)} />
+          </div>
           <ul className="flex flex-col gap-2 md:flex-row md:items-center md:justify-self-center">
             <li className="p-3 font-bold uppercase text-text-primary">
               <Link to="./">home</Link>
             </li>
-            <li className="p-3 font-bold uppercase text-text-primary">
+            {/* <li className="p-3 font-bold uppercase text-text-primary">
               bookmarks
-            </li>
+            </li> */}
             {user && (
               <li className="p-3 font-bold uppercase text-text-primary">
                 {" "}
@@ -95,7 +97,6 @@ const Nav = ({ user, loadingUser, onLogout }) => {
               </li>
             )}
 
-            <Search />
             {/* <li className="p-3 font-bold uppercase text-text-primary">news</li> */}
           </ul>
 

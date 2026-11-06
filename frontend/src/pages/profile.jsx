@@ -19,7 +19,7 @@ const Profile = ({ bookmarked = {}, toggleBookmark, user }) => {
 
   return (
     <>
-      <div className="max-w-320 mx-auto px-4 md:px-10 mb-20">
+      <div className="max-w-7xl mx-auto pt-15 md:pt-0 px-4 md:px-10 mb-20">
         <div>
           <h1 className="text-4xl md:text-5xl font-bold mt-8">
             yoo, {user.username}-kun

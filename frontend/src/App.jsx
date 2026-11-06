@@ -28,11 +28,11 @@ function BackendStatus() {
       });
   }, []);
 
-  return (
-    <>
-      <p>Backend :{connected}</p>
-    </>
-  );
+  // return (
+  //   <>
+  //     <p>Backend :{connected}</p>
+  //   </>
+  // );
 }
 
 // ============================================================================

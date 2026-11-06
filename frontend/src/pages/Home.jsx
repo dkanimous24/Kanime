@@ -199,7 +199,9 @@ function Home({ bookmarked, toggleBookmark }) {
         <div className="h-[432px] w-[432px] sm:h-[519px] sm:w-[519px]">
           <AnimatedSvg />
         </div>
-        <p className="text-base font-medium text-text-secondary">Loading...</p>
+        <p className="text-base font-medium absolute bottom-60 text-text-secondary">
+          Loading...
+        </p>
       </div>
     );
 
@@ -251,7 +253,7 @@ function Home({ bookmarked, toggleBookmark }) {
         ) : (
           <div className="flex h-100 w-full items-center justify-center bg-secondary text-text-secondary"></div>
         )}
-        <Search />
+        {/* <Search /> */}
       </header>
       <div className=" sm:max-w-75 justify-self-center mx-auto md:max-w-300 lg:max-w-350  md:mx-auto mt-16">
         <Genres genres={genres} selected={selected} onSelected={setSelected} />
