@@ -1,4 +1,6 @@
-const API_BASE = "/accounts/";
+const API_ORIGIN = import.meta.env.VITE_API_URL || "";
+
+const API_BASE = `${API_ORIGIN}/accounts/`;
 
 let csrf_token = null;
 
@@ -40,7 +42,9 @@ async function apiRequest(path, options = {}) {
     headers["X-CSRFToken"] = token;
   }
 
-  const url = path.startsWith("/") ? path : `${API_BASE}${path}`;
+  const url = path.startsWith("/")
+    ? `${API_ORIGIN}${path}`
+    : `${API_BASE}${path}`;
 
   const response = await fetch(url, {
     ...options,
