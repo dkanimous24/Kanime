@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Virtual environments
+.venv/
+venv/
+
+# Database backups
+backups/
+
+# React build
+frontend/dist/
+frontend/node_modules/
+
+# PostgreSQL backups
+*.dump
+backups/
+
+# secrets
+kanime_data.json
+kanime_data_utf8.json
+*.dump
+db-Copy.sqlite3
+db_backup.sqlite3
