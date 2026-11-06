@@ -160,7 +160,7 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
     <>
       <style>{heroStyles}</style>
       <div
-        className="hero h-[100%] before:bg-primary before:absolute before:left-[0px] before:blur-xl md:before:blur-2xl
+        className="hero h-[100%] before:bg-primary before:absolute before:left-0 before:blur-xl md:before:blur-2xl
         before:w-[40%] md:before:w-[25%] before:shrink-0 before:h-full before:scale-305 md:before:scale-205 before:z-50 before:opacity-[20%]"
       >
         <div
@@ -210,7 +210,7 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
           type="button"
           onClick={prevSlide}
           aria-label="Previous slide"
-          className={`group absolute left-0 top-1/2 -translate-y-1/2 rounded-full p-3 z-50 select-none cursor-pointer transition duration-200 hover:bg-primary/40 hover:backdrop-blur-sm active:scale-95 ${focusRing}`}
+          className={`group absolute  left-0 top-1/2 -translate-y-1/2 rounded-full p-3 z-9999999 select-none cursor-pointer transition duration-200 hover:bg-primary/40 hover:backdrop-blur-sm active:scale-95 ${focusRing}`}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -252,7 +252,10 @@ const Hero = ({ slides, animeList, bookmarked, onToggle }) => {
 
         <div className="absolute md:top-[24px] top-[86px] sm:justify-self-center md:justify-self-start justify-self-center md:left-16 right-0 z-999 flex gap-2 p-3">
           {/* key = slide index, so the text settles in on every slide change */}
-          <div key={currentSlide} className="hero-in flex flex-col">
+          <div
+            key={currentSlide}
+            className={`${current.name.length < 20 ? "mr-5" : "ml-10"} hero-in flex flex-col`}
+          >
             <div className="flex gap-3 text-text-secondary items-center">
               <p className="px-3 py-1 md:px-5 md:py-1 rounded-md bg-genre-shonen uppercase tracking-wider text-primary font-extrabold md:text-[16px] text-[10px]">
                 Trending

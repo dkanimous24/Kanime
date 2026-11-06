@@ -84,11 +84,11 @@ const AnimeProfile = ({ bookmarked, toggleBookmark }) => {
     <>
       <div className="min-h-screen bg-primary text-text-primary pb-20">
         {/* ANIME COVER SECTION */}
-        <div className="relative w-full h-85 sm:h-100 lg:h-115 overflow-hidden bg-secondary">
+        <div className="relative w-full h-125 md:h-85 sm:h-100 lg:h-115 overflow-hidden bg-secondary">
           <img
             src={anime.cover || anime.poster}
             alt={anime.title}
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-center transition-transform duration-300 hover:scale-[1.02] "
           />
 
           {/* Dark overlay */}
@@ -155,7 +155,7 @@ const AnimeProfile = ({ bookmarked, toggleBookmark }) => {
                 <img
                   src={anime.poster}
                   alt={anime.title}
-                  className="w-full aspect-[2/3] object-cover"
+                  className="w-full aspect-2/3 object-cover"
                 />
               </div>
             </div>

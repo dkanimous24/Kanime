@@ -4,7 +4,7 @@ const List = ({ list }) => {
   return (
     <div
       id="bookmarks"
-      className="bg-secondary border border-elevated p-3 max-w-[500px] rounded-2xl scroll-mt-24"
+      className="bg-secondary border border-elevated p-3 max-w-[500px] rounded-2xl scroll-mt-24 mx-4 sm:mx-0 mb-8"
     >
       <div className="p-4">
         <div className="flex mb-2">
