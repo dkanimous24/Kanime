@@ -260,7 +260,8 @@ function Home({ bookmarked, toggleBookmark }) {
         <h1 className="md:text-4xl md:font-bold my-6 mt-24 md:mt-4 text-2xl p-4 text-center md:text-left">
           Discover your favorite anime
         </h1>
-        <section className="grid grid-cols-2 md:grid-cols-5 sm:grid-cols-1 gap-4 p-3 mb-[48px] mt-6 md:mt-0 min-h-[200px]">
+        {/* FIX: removed sm:grid-cols-1, it overrode grid-cols-2 from 640px up and caused the single big column */}
+        <section className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 p-3 mb-[48px] mt-6 md:mt-0 min-h-[200px]">
           {animes.length > 0 ? (
             <AnimeCard
               animes={filteredAnimes}
@@ -274,9 +275,8 @@ function Home({ bookmarked, toggleBookmark }) {
           Anime News
         </h1>
         <section className="md:font-bold my-6 mmt-5 md:mt-4 md:flex gap-3">
-          {latestNews.length !== 0 ? (
-            <News news={latestNews.slice(0, 3)} />
-          ) : null}
+          {/* FIX: always render News so it can show the loader; it shows the list once latestNews has items */}
+          <News news={latestNews.slice(0, 3)} isLoading={pending.news} />
           <List list={bookmarkedAnimes} />
         </section>
       </div>

@@ -24,14 +24,20 @@ const Summary = ({ text }) => {
   const [clamped, setClamped] = useState(false);
 
   useEffect(() => {
-    const check = () => {
-      const el = ref.current;
-      if (el) setClamped(el.scrollHeight > el.clientHeight);
-    };
+    const el = ref.current;
+    if (!el) return;
+
+    // FIX: re-check whenever the text's own size changes (fonts loading, layout settling,
+    // rotation, container resize), not just on window resize and first mount.
+    const check = () => setClamped(el.scrollHeight > el.clientHeight + 1);
 
     check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+
+    const observer = new ResizeObserver(check);
+    observer.observe(el);
+    document.fonts?.ready.then(check);
+
+    return () => observer.disconnect();
   }, [text]);
 
   return (
@@ -51,7 +57,25 @@ const Summary = ({ text }) => {
   );
 };
 
-const News = ({ news }) => {
+const News = ({ news, isLoading }) => {
+  // Loader while the request is in flight
+  if (isLoading) {
+    return (
+      <div className="flex w-full items-center justify-center px-4 py-16 sm:py-24">
+        <div className="loader" />
+      </div>
+    );
+  }
+
+  // Request finished but nothing came back
+  if (!news || news.length === 0) {
+    return (
+      <p className="px-4 py-16 text-center text-text-secondary sm:py-24">
+        No news right now. Try again later.
+      </p>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2 px-4 sm:px-0 pb-8">
       {news.map((item, index) => {
@@ -59,7 +83,7 @@ const News = ({ news }) => {
         const imageUrl = safeUrl(item.image);
 
         const content = (
-          <div className="bg-secondary p-3 flex gap-2 rounded-2xl border border-elevated relative hover:border-2 hover:border-pop-alt transition duration-100 ease-in">
+          <div className="bg-secondary p-3 lg:w-215  flex gap-2 rounded-2xl border border-elevated relative hover:border-2 hover:border-pop-alt transition duration-100 ease-in">
             <div className="w-16 sm:w-20 h-36 bg-primary shrink-0">
               {imageUrl && (
                 <img
